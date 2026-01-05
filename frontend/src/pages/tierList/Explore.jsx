@@ -1,40 +1,29 @@
 import React, { useState } from 'react';
 import { FaFire, FaStar, FaGamepad, FaFilm, FaMusic, FaUtensils, FaBook, FaFutbol, FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {Link} from "react-router-dom";
 
 const ExplorePage = () => {
     const [selectedCategory, setSelectedCategory] = useState('tendance');
     const [searchQuery, setSearchQuery] = useState('');
 
     const categories = [
-        { id: 'tendance', name: 'Tendance', icon: <FaFire />, color: 'from-red-500 to-orange-500' },
-        { id: 'top-rated', name: 'Top Rated', icon: <FaStar />, color: 'from-yellow-500 to-amber-500' },
-        { id: 'jeux', name: 'Jeux Vidéo', icon: <FaGamepad />, color: 'from-green-500 to-emerald-600' },
-        { id: 'films', name: 'Films & Séries', icon: <FaFilm />, color: 'from-blue-500 to-indigo-600' },
-        { id: 'musique', name: 'Musique', icon: <FaMusic />, color: 'from-purple-500 to-pink-500' },
-        { id: 'nourriture', name: 'Nourriture', icon: <FaUtensils />, color: 'from-orange-500 to-red-500' },
-        { id: 'livres', name: 'Livres', icon: <FaBook />, color: 'from-amber-700 to-yellow-600' },
-        { id: 'sports', name: 'Sports', icon: <FaFutbol />, color: 'from-green-600 to-teal-500' },
-        { id: 'tech', name: 'Technologie', icon: <FaGamepad />, color: 'from-gray-700 to-gray-900' },
-        { id: 'voyage', name: 'Voyage', icon: <FaStar />, color: 'from-cyan-500 to-blue-500' },
+        { id: 'tendance', name: 'Tendance', icon: <FaFire />, color: 'from-red-500 to-orange-500', items: ['Top TikTok 2024', 'Meilleures Séries Netflix', 'IA Tools Populaires'] },
+        { id: 'top-rated', name: 'Top Rated', icon: <FaStar />, color: 'from-yellow-500 to-amber-500', items: ['Classiques Cinéma', 'Jeux Éternels', 'Albums Légendaires'] },
+        { id: 'jeux', name: 'Jeux Vidéo', icon: <FaGamepad />, color: 'from-green-500 to-emerald-600', items: ['PS5 Exclusives', 'Jeux Indé 2024', 'Meilleurs RPG'] },
+        { id: 'films', name: 'Films & Séries', icon: <FaFilm />, color: 'from-blue-500 to-indigo-600', items: ['Marvel vs DC', 'Films d\'Animation', 'Horreur 2024'] },
+        { id: 'musique', name: 'Musique', icon: <FaMusic />, color: 'from-purple-500 to-pink-500', items: ['Artistes Hip-Hop', 'Festivals 2024', 'Nouveaux Albums'] },
+        { id: 'nourriture', name: 'Nourriture', icon: <FaUtensils />, color: 'from-orange-500 to-red-500', items: ['Restos Paris', 'Recettes Faciles', 'Cuisine du Monde'] },
+        { id: 'livres', name: 'Livres', icon: <FaBook />, color: 'from-amber-700 to-yellow-600', items: ['Best-Sellers', 'Fantasy Épique', 'Sci-Fi Modernes'] },
+        { id: 'sports', name: 'Sports', icon: <FaFutbol />, color: 'from-green-600 to-teal-500', items: ['Joueurs NBA', 'Équipes Football', 'Athlètes Olympiques'] },
+        { id: 'tech', name: 'Technologie', icon: <FaGamepad />, color: 'from-gray-700 to-gray-900', items: ['Smartphones 2024', 'Gadgets High-Tech', 'Applications'] },
+        { id: 'voyage', name: 'Voyage', icon: <FaStar />, color: 'from-cyan-500 to-blue-500', items: ['Destinations Pas Chères', 'Plages Paradisiaques', 'Villes Culturelles'] },
     ];
 
     const generateItems = (categoryId, count) => {
-        const categoryNames = {
-            'tendance': ['Top TikTok 2024', 'Meilleures Séries Netflix', 'IA Tools Populaires'],
-            'top-rated': ['Classiques Cinéma', 'Jeux Éternels', 'Albums Légendaires'],
-            'jeux': ['PS5 Exclusives', 'Jeux Indé 2024', 'Meilleurs RPG'],
-            'films': ['Marvel vs DC', 'Films d\'Animation', 'Horreur 2024'],
-            'musique': ['Artistes Hip-Hop', 'Festivals 2024', 'Nouveaux Albums'],
-            'nourriture': ['Restos Paris', 'Recettes Faciles', 'Cuisine du Monde'],
-            'livres': ['Best-Sellers', 'Fantasy Épique', 'Sci-Fi Modernes'],
-            'sports': ['Joueurs NBA', 'Équipes Football', 'Athlètes Olympiques'],
-            'tech': ['Smartphones 2024', 'Gadgets High-Tech', 'Applications'],
-            'voyage': ['Destinations Pas Chères', 'Plages Paradisiaques', 'Villes Culturelles']
-        };
 
         return Array.from({ length: count }, (_, i) => ({
             id: `${categoryId}-${i}`,
-            title: `${categoryNames[categoryId]?.[i % 3] || 'Item'} ${i + 1}`,
+            title: `${categories.find(c => c.id === categoryId)?.name || 'Item'} ${i + 1}`,
             author: `@user${Math.floor(Math.random() * 1000)}`,
             likes: Math.floor(Math.random() * 1000) + 100,
             items: Math.floor(Math.random() * 20) + 5,
@@ -68,12 +57,12 @@ const ExplorePage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="min-h-screen bg-linear-to-b from-gray-50 to-gray-100">
             <div className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                 Explore
                             </h1>
                             <p className="text-gray-600">Découvrez les meilleurs classements de la communauté</p>
@@ -128,9 +117,9 @@ const ExplorePage = () => {
                                 <button
                                     key={category.id}
                                     onClick={() => setSelectedCategory(category.id)}
-                                    className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 rounded-xl transition-all duration-300 ${
+                                    className={`shrink-0 flex items-center space-x-3 px-6 py-4 rounded-xl transition-all duration-300 ${
                                         selectedCategory === category.id
-                                            ? `bg-gradient-to-r ${category.color} text-white shadow-lg transform scale-105`
+                                            ? `bg-linear-to-r ${category.color} text-white shadow-lg transform scale-105`
                                             : 'bg-white text-gray-700 hover:bg-gray-50 shadow hover:shadow-md'
                                     }`}
                                 >
@@ -180,7 +169,7 @@ const ExplorePage = () => {
                                         alt={item.title}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
-                                    <div className={`absolute inset-0 bg-gradient-to-t ${item.color} opacity-60`}></div>
+                                    <div className={`absolute inset-0 bg-linear-to-t ${item.color} opacity-60`}></div>
                                     <div className="absolute top-4 right-4">
                                         <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
                                             <FaStar className="text-yellow-500" />
@@ -193,7 +182,7 @@ const ExplorePage = () => {
                                         {item.title}
                                     </h4>
                                     <div className="flex items-center text-gray-600 mb-4">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold mr-3">
+                                        <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold mr-3">
                                             {item.author.substring(1, 3).toUpperCase()}
                                         </div>
                                         <span className="text-sm">{item.author}</span>
@@ -209,9 +198,9 @@ const ExplorePage = () => {
                                                 <span className="text-sm text-gray-500">{item.items} items</span>
                                             </div>
                                         </div>
-                                        <button className="btn btn-sm btn-primary rounded-xl px-4">
+                                        <Link to={'/tierlist/'+ item.id} className="btn btn-sm btn-primary rounded-xl px-4">
                                             Voir
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -241,7 +230,7 @@ const ExplorePage = () => {
 
                 <div className="mt-16">
                     <h3 className="text-2xl font-bold text-gray-800 mb-6">Tendances du moment</h3>
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
+                    <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
                         <div className="flex flex-col md:flex-row gap-6">
                             <div className="md:w-1/3">
                                 <div className="bg-white rounded-xl p-5 shadow">
