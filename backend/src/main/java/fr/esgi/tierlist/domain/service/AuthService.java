@@ -49,7 +49,6 @@ public class AuthService {
         user.setPassword(encoder.encode(userForm.getPassword()));
 
         userRepository.save(user);
-
-        return "User registered successfully!";
+        return jwtUtils.generateToken(user.getUsername());
     }
 }
