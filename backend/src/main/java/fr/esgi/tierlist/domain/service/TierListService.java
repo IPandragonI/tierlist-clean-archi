@@ -1,12 +1,15 @@
 package fr.esgi.tierlist.domain.service;
 
+import fr.esgi.tierlist.domain.model.Column;
+import fr.esgi.tierlist.domain.model.Logo;
 import fr.esgi.tierlist.domain.model.TierList;
-import fr.esgi.tierlist.domain.model.User;
 import fr.esgi.tierlist.application.form.TierListForm;
 import fr.esgi.tierlist.domain.port.TierListDatasourcePort;
+import fr.esgi.tierlist.infrastructure.security.IAuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,13 +17,21 @@ import java.util.Optional;
 public class TierListService {
 
     private final TierListDatasourcePort tierListDatasourcePort;
-    private final UserService userService;
+    private final ColumnService columnService;
+    private final LogoService logoService;
+    private final IAuthenticationFacade authenticationFacade;
 
     public TierList create(TierListForm tierListform) {
         TierList tierList = new TierList();
         tierList.setName(tierListform.getName());
-        User creator = userService.findById(tierListform.getCreatorId());
-        tierList.setCreator(creator);
+        tierList.setCreator(authenticationFacade.getCurrentUser());
+
+        List<Column> columns = columnService.createAll(tierListform.getColumns(), tierList);
+        tierList.setColumns(columns);
+
+        List<Logo> logos = logoService.getOrCreateAll(tierListform.getLogos());
+        tierList.setLogos(logos);
+
         return tierListDatasourcePort.save(tierList);
     }
 
@@ -30,12 +41,19 @@ public class TierListService {
 
     public TierList update(Long id, TierListForm tierListForm) {
         Optional<TierList> optionalTierList = tierListDatasourcePort.findById(id);
-        if (optionalTierList.isPresent()) {
-            TierList tierList = optionalTierList.get();
-            tierList.setName(tierListForm.getName());
-            return tierListDatasourcePort.save(tierList);
+        if (optionalTierList.isEmpty()) {
+            throw new IllegalArgumentException("Tier List not found with id: " + id);
         }
-        return null;
+        TierList tierList = optionalTierList.get();
+        tierList.setName(tierListForm.getName());
+
+        List<Column> updatedColumns = columnService.updateAll(tierListForm.getColumns(), tierList);
+        tierList.setColumns(updatedColumns);
+
+        List<Logo> updatedLogos = logoService.refreshAll(tierListForm.getLogos());
+        tierList.setLogos(updatedLogos);
+
+        return tierListDatasourcePort.save(tierList);
     }
 
     public void delete(Long id) {

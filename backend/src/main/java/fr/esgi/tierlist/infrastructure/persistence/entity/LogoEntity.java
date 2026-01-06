@@ -42,7 +42,9 @@ public class LogoEntity {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) createdAt = now;
+        updatedAt = now;
     }
 
     @PreUpdate
@@ -57,8 +59,8 @@ public class LogoEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        LogoEntity tierList = (LogoEntity) o;
-        return getId() != null && Objects.equals(getId(), tierList.getId());
+        LogoEntity logoEntity = (LogoEntity) o;
+        return getId() != null && Objects.equals(getId(), logoEntity.getId());
     }
 
     @Override

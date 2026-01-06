@@ -25,8 +25,8 @@ public class LogoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create or retrieve a logo by domain")
-    public ResponseEntity<LogoDto> getOrCreateLogo(@Valid @RequestBody LogoForm request) {
-        Logo logo = logoService.getOrCreateLogo(request.getDomain());
+    public ResponseEntity<LogoDto> getOrCreate(@Valid @RequestBody LogoForm request) {
+        Logo logo = logoService.getOrCreate(request.getDomain());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(LogoDto.transfer(logo));
     }
@@ -34,35 +34,35 @@ public class LogoController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get logo by ID")
-    public ResponseEntity<LogoDto> getLogoById(@PathVariable Long id) {
-        Logo logo = logoService.getLogoById(id);
+    public ResponseEntity<LogoDto> getById(@PathVariable Long id) {
+        Logo logo = logoService.getById(id);
         return ResponseEntity.ok(LogoDto.transfer(logo));
     }
 
     @GetMapping("/domain/{domain}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get logo by domain")
-    public ResponseEntity<LogoDto> getLogoByDomain(@PathVariable String domain) {
-        return logoService.getLogoByDomain(domain)
+    public ResponseEntity<LogoDto> getByDomain(@PathVariable String domain) {
+        return logoService.getByDomain(domain)
                 .map(logo -> ResponseEntity.ok(LogoDto.transfer(logo)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all logos")
-    public ResponseEntity<List<LogoDto>> getAllLogos() {
-        List<LogoDto> logos = logoService.getAllLogos().stream()
+    @Operation(summary = "Find all logos")
+    public ResponseEntity<List<LogoDto>> findAll() {
+        List<LogoDto> logos = logoService.findAll().stream()
                 .map(LogoDto::transfer)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(logos);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/find")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Search logos by name")
-    public ResponseEntity<List<LogoDto>> searchLogos(@RequestParam String name) {
-        List<LogoDto> logos = logoService.searchLogosByName(name).stream()
+    public ResponseEntity<List<LogoDto>> find(@RequestParam String name) {
+        List<LogoDto> logos = logoService.findByName(name).stream()
                 .map(LogoDto::transfer)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(logos);
@@ -71,16 +71,16 @@ public class LogoController {
     @PutMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Refresh logo by domain")
-    public ResponseEntity<LogoDto> refreshLogo(@Valid @RequestBody LogoForm request) {
-        Logo logo = logoService.refreshLogo(request.getDomain());
+    public ResponseEntity<LogoDto> refresh(@Valid @RequestBody LogoForm request) {
+        Logo logo = logoService.refresh(request.getDomain());
         return ResponseEntity.ok(LogoDto.transfer(logo));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete logo by ID")
-    public ResponseEntity<Void> deleteLogo(@PathVariable Long id) {
-        logoService.deleteLogo(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        logoService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

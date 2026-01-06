@@ -38,21 +38,21 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
-    private void onCreate() {
+    protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
         if (createdAt == null) createdAt = now;
         updatedAt = now;
     }
 
     @PreUpdate
-    private void onUpdate() {
+    protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 

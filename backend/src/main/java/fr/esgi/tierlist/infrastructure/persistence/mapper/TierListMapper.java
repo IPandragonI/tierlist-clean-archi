@@ -1,9 +1,13 @@
 package fr.esgi.tierlist.infrastructure.persistence.mapper;
 
+import fr.esgi.tierlist.domain.model.Column;
+import fr.esgi.tierlist.domain.model.Logo;
 import fr.esgi.tierlist.domain.model.TierList;
+import fr.esgi.tierlist.infrastructure.persistence.entity.ColumnEntity;
+import fr.esgi.tierlist.infrastructure.persistence.entity.LogoEntity;
 import fr.esgi.tierlist.infrastructure.persistence.entity.TierListEntity;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record TierListMapper() {
 
@@ -12,6 +16,10 @@ public record TierListMapper() {
         TierList tierList = new TierList();
         tierList.setId(t.getId());
         tierList.setName(t.getName());
+        List<Column> columns = t.getColumns().stream().map(ColumnMapper::toDomain).toList();
+        tierList.setColumns(columns);
+        List<Logo> logo = t.getLogos().stream().map(LogoMapper::toDomain).toList();
+        tierList.setLogos(logo);
         tierList.setCreator(UserMapper.toDomain(t.getCreator()));
         tierList.setCreatedAt(t.getCreatedAt());
         tierList.setUpdatedAt(t.getUpdatedAt());
@@ -23,15 +31,13 @@ public record TierListMapper() {
         TierListEntity tierListEntity = new TierListEntity();
         tierListEntity.setId(t.getId());
         tierListEntity.setName(t.getName());
+        List<ColumnEntity> columns = t.getColumns().stream().map(ColumnMapper::toEntity).toList();
+        tierListEntity.setColumns(columns);
+        List<LogoEntity> logo = t.getLogos().stream().map(LogoMapper::toEntity).toList();
+        tierListEntity.setLogos(logo);
         tierListEntity.setCreator(UserMapper.toEntity(t.getCreator()));
         tierListEntity.setCreatedAt(t.getCreatedAt());
         tierListEntity.setUpdatedAt(t.getUpdatedAt());
         return tierListEntity;
-    }
-
-    public static void prepareForSave(TierListEntity t) {
-        LocalDateTime now = LocalDateTime.now();
-        if (t.getCreatedAt() == null) t.setCreatedAt(now);
-        t.setUpdatedAt(now);
     }
 }

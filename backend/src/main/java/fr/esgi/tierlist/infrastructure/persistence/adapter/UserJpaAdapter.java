@@ -30,9 +30,13 @@ public class UserJpaAdapter implements UserDatasourcePort {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username).map(UserMapper::toDomain);
+    }
+
+    @Override
     public User save(User user) {
         var userEntity = UserMapper.toEntity(user);
-        UserMapper.prepareForSave(userEntity);
         var savedEntity = userRepository.save(userEntity);
         return UserMapper.toDomain(savedEntity);
     }

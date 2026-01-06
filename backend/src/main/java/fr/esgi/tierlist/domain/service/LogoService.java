@@ -1,5 +1,6 @@
 package fr.esgi.tierlist.domain.service;
 
+import fr.esgi.tierlist.application.form.LogoForm;
 import fr.esgi.tierlist.domain.model.Logo;
 import fr.esgi.tierlist.domain.port.LogoDatasourcePort;
 import fr.esgi.tierlist.domain.port.LogoProviderPort;
@@ -25,7 +26,7 @@ public class LogoService {
     private final ObjectStoragePort objectStoragePort;
 
 
-    public Logo getOrCreateLogo(String domain) {
+    public Logo getOrCreate(String domain) {
         String normalizedDomain = normalizeDomain(domain);
 
         Optional<Logo> existingLogo = logoDatasourcePort.findByDomain(normalizedDomain);
@@ -71,28 +72,34 @@ public class LogoService {
         return logoDatasourcePort.save(logo);
     }
 
-    public Logo getLogoById(Long id) {
+    public List<Logo> getOrCreateAll(List<LogoForm> logoForms) {
+        return logoForms.stream()
+                .map(form -> getOrCreate(form.getDomain()))
+                .toList();
+    }
+
+    public Logo getById(Long id) {
         return logoDatasourcePort.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Logo not found with id: " + id));
     }
 
-    public Optional<Logo> getLogoByDomain(String domain) {
+    public Optional<Logo> getByDomain(String domain) {
         String normalizedDomain = normalizeDomain(domain);
         return logoDatasourcePort.findByDomain(normalizedDomain);
     }
 
-    public List<Logo> getAllLogos() {
+    public List<Logo> findAll() {
         return logoDatasourcePort.findAll();
     }
 
-    public List<Logo> searchLogosByName(String name) {
+    public List<Logo> findByName(String name) {
         return logoDatasourcePort.findAll().stream()
                 .filter(logo -> logo.getName().toLowerCase().contains(name.toLowerCase()))
                 .toList();
     }
 
-    public void deleteLogo(Long id) {
-        Logo logo = getLogoById(id);
+    public void delete(Long id) {
+        Logo logo = getById(id);
 
         if (logo.getStoredUrl() != null && !logo.getStoredUrl().isEmpty()) {
             String objectName = "logos/" + logo.getDomain() + ".png";
@@ -102,12 +109,18 @@ public class LogoService {
         logoDatasourcePort.deleteById(id);
     }
 
-    public Logo refreshLogo(String domain) {
+    public Logo refresh(String domain) {
         String normalizedDomain = normalizeDomain(domain);
 
-        logoDatasourcePort.findByDomain(normalizedDomain).ifPresent(logo -> deleteLogo(logo.getId()));
+        logoDatasourcePort.findByDomain(normalizedDomain).ifPresent(logo -> delete(logo.getId()));
 
-        return getOrCreateLogo(normalizedDomain);
+        return getOrCreate(normalizedDomain);
+    }
+
+    public List<Logo> refreshAll(List<LogoForm> logoForms) {
+        return logoForms.stream()
+                .map(form -> refresh(form.getDomain()))
+                .toList();
     }
 
     private String normalizeDomain(String domain) {

@@ -25,7 +25,6 @@ public class TierListJpaAdapter implements TierListDatasourcePort {
     @Override
     public TierList save(TierList tierList) {
         var tierListEntity = TierListMapper.toEntity(tierList);
-        TierListMapper.prepareForSave(tierListEntity);
         var savedEntity = tierListRepository.save(tierListEntity);
         return TierListMapper.toDomain(savedEntity);
     }

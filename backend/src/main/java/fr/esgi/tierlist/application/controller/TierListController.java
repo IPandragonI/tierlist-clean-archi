@@ -19,7 +19,7 @@ public class TierListController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new Tier List")
-    public TierListDto createTierList(@RequestBody TierListForm tierListForm) {
+    public TierListDto create(@RequestBody TierListForm tierListForm) {
         TierList tierList = tierListService.create(tierListForm);
         return TierListDto.transfer(tierList);
     }
@@ -27,7 +27,7 @@ public class TierListController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find Tier List by ID")
-    public TierListDto findTierListById(@PathVariable Long id) {
+    public TierListDto findById(@PathVariable Long id) {
         TierList tierList = tierListService.findById(id);
         return TierListDto.transfer(tierList);
     }
@@ -35,7 +35,7 @@ public class TierListController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update Tier List by ID")
-    public TierListDto updateTierList(@PathVariable Long id, @RequestBody TierListForm tierListForm) {
+    public TierListDto update(@PathVariable Long id, @RequestBody TierListForm tierListForm) {
         TierList tierList = tierListService.update(id, tierListForm);
         return TierListDto.transfer(tierList);
     }
@@ -43,7 +43,7 @@ public class TierListController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Tier List by ID")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTierList(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         tierListService.delete(id);
     }
 

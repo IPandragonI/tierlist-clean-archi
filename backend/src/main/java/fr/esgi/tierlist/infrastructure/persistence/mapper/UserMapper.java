@@ -3,8 +3,6 @@ package fr.esgi.tierlist.infrastructure.persistence.mapper;
 import fr.esgi.tierlist.domain.model.User;
 import fr.esgi.tierlist.infrastructure.persistence.entity.UserEntity;
 
-import java.time.LocalDateTime;
-
 public record UserMapper() {
 
     public static User toDomain(UserEntity e) {
@@ -33,11 +31,5 @@ public record UserMapper() {
         e.setCreatedAt(u.getCreatedAt());
         e.setUpdatedAt(u.getUpdatedAt());
         return e;
-    }
-
-    public static void prepareForSave(UserEntity e) {
-        LocalDateTime now = LocalDateTime.now();
-        if (e.getCreatedAt() == null) e.setCreatedAt(now);
-        e.setUpdatedAt(now);
     }
 }

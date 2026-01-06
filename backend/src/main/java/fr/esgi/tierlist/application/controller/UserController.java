@@ -28,21 +28,21 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find user by ID")
-    public UserDto findTierListById(@PathVariable Long id) {
+    public UserDto findById(@PathVariable Long id) {
         return UserDto.transfer(userService.findById(id));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update user by ID")
-    public UserDto updateTierList(@PathVariable Long id, @RequestBody UserForm userForm) {
+    public UserDto update(@PathVariable Long id, @RequestBody UserForm userForm) {
         return UserDto.transfer(userService.update(id, userForm));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete user by ID")
-    public void deleteTierList(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         userService.delete(id);
     }
 

@@ -1,27 +1,29 @@
 package fr.esgi.tierlist.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class TierList {
+public class TierListLogo {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    private String name;
+    private TierList tierList;
 
-    private User creator;
+    private Logo logo;
 
-    private List<Column> columns;
+    private User user;
 
-    private List<Logo> logos;
+    private Column column;
 
     private LocalDateTime createdAt;
 

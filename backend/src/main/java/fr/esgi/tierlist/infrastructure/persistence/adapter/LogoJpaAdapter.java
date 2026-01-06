@@ -40,7 +40,6 @@ public class LogoJpaAdapter implements LogoDatasourcePort {
     @Override
     public Logo save(Logo tierList) {
         var logoEntity = LogoMapper.toEntity(tierList);
-        LogoMapper.prepareEntityForUpdate(logoEntity);
         var savedEntity = logoRepository.save(logoEntity);
         return LogoMapper.toDomain(savedEntity);
     }

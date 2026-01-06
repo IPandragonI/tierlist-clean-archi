@@ -10,8 +10,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogoForm {
+public class ColumnForm {
 
-    @NotBlank(message = "Domain is required")
-    private String domain;
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    @NotBlank(message = "Position is required")
+    private int position;
 }

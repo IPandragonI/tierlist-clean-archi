@@ -3,11 +3,10 @@ package fr.esgi.tierlist.infrastructure.persistence.mapper;
 import fr.esgi.tierlist.domain.model.Logo;
 import fr.esgi.tierlist.infrastructure.persistence.entity.LogoEntity;
 
-import java.time.LocalDateTime;
-
 public record LogoMapper() {
 
     public static Logo toDomain(LogoEntity entity) {
+        if (entity == null) return null;
         Logo logo = new Logo();
         logo.setId(entity.getId());
         logo.setName(entity.getName());
@@ -20,6 +19,7 @@ public record LogoMapper() {
     }
 
     public static LogoEntity toEntity(Logo logo) {
+        if (logo == null) return null;
         LogoEntity entity = new LogoEntity();
         entity.setId(logo.getId());
         entity.setName(logo.getName());
@@ -29,11 +29,5 @@ public record LogoMapper() {
         entity.setCreatedAt(logo.getCreatedAt());
         entity.setUpdatedAt(logo.getUpdatedAt());
         return entity;
-    }
-
-    public static void prepareEntityForUpdate(LogoEntity l) {
-        LocalDateTime now = LocalDateTime.now();
-        if (l.getCreatedAt() == null) l.setCreatedAt(now);
-        l.setUpdatedAt(now);
     }
 }

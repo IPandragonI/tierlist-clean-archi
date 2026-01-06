@@ -1,6 +1,7 @@
 package fr.esgi.tierlist.application.form;
 
 import lombok.*;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 
@@ -10,8 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 public class TierListForm {
     private Long id;
+
+    @NotBlank(message = "Name is required")
     private String name;
-    private Long creatorId;
-    //link items when creating a tierlist
-    private List<String> items;
+    private List<LogoForm> logos;
+
+    @NotEmpty(message = "At least one column is required")
+    private List<ColumnForm> columns;
 }

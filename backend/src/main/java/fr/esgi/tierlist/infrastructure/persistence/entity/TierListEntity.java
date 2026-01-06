@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,11 +31,31 @@ public class TierListEntity {
     @ToString.Exclude
     private UserEntity creator;
 
-    @Column
+    @OneToMany(mappedBy = "tierList", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<ColumnEntity> columns;
+
+    @OneToMany(mappedBy = "tierList", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<LogoEntity> logos;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     @Override
     public final boolean equals(Object o) {

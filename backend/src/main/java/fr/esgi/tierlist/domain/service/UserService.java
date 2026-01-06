@@ -23,6 +23,10 @@ public class UserService {
         return userDatasourcePort.findById(id).orElse(null);
     }
 
+    public User findByUsername(String username) {
+        return userDatasourcePort.findByUsername(username).orElse(null);
+    }
+
     public User update(Long id, UserForm userForm) {
         Optional<User> optionalUser = userDatasourcePort.findById(id);
         if (optionalUser.isPresent()) {
