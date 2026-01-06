@@ -10,7 +10,7 @@ services:
       MYSQL_USER: tierlist
       MYSQL_PASSWORD: tierlistpass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -36,12 +36,16 @@ services:
     image: minio/minio:latest
     container_name: tierlist-minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadminpass
-    command: 'minio server /data --console-address ":9001"'
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: password
+    command: 'minio server /data/minio --console-address ":9001"'
+    volumes:
+      - 'minio:/data/minio'
     ports:
       - "9000:9000"
       - "9001:9001"
 
 volumes:
   db_data:
+  minio:
+    driver: local

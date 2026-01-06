@@ -1,7 +1,7 @@
 package fr.esgi.tierlist.config;
 
-import fr.esgi.tierlist.domain.port.TierListDatasourcePort;
-import fr.esgi.tierlist.domain.port.UserDatasourcePort;
+import fr.esgi.tierlist.domain.port.*;
+import fr.esgi.tierlist.domain.service.LogoService;
 import fr.esgi.tierlist.domain.service.TierListService;
 import fr.esgi.tierlist.domain.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -18,5 +18,10 @@ public class BeanConfiguration {
     @Bean
     public TierListService tierListService(TierListDatasourcePort tierListDatasourcePort, UserDatasourcePort userDatasourcePort) {
         return new TierListService(tierListDatasourcePort, userService(userDatasourcePort));
+    }
+
+    @Bean
+    public LogoService logoService(LogoDatasourcePort logoDatasourcePort, LogoProviderPort logoProviderPort, ObjectStoragePort objectStoragePort) {
+        return new LogoService(logoDatasourcePort, logoProviderPort, objectStoragePort);
     }
 }

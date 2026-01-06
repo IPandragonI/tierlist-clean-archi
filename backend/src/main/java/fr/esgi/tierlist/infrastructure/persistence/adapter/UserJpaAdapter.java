@@ -31,9 +31,9 @@ public class UserJpaAdapter implements UserDatasourcePort {
 
     @Override
     public User save(User user) {
-        UserEntity userEntity = UserMapper.toEntity(user);
+        var userEntity = UserMapper.toEntity(user);
         UserMapper.prepareForSave(userEntity);
-        UserEntity savedEntity = userRepository.save(userEntity);
+        var savedEntity = userRepository.save(userEntity);
         return UserMapper.toDomain(savedEntity);
     }
 
