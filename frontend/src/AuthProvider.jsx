@@ -7,7 +7,7 @@ export const AuthProvider = ({children, pollInterval = 1000}) => {
     const getTokenFromStorage = () => window.localStorage.getItem('token');
 
     const [token, setTokenState] = useState(getTokenFromStorage());
-    const [currentUser, setCurrentUser] = useState(window.localStorage.getItem('user'));
+    const [currentUser, setCurrentUser] = useState(JSON.parse(window.localStorage.getItem('currentUser')) || null);
     const [isAuthenticated, setIsAuthenticated] = useState(Boolean(getTokenFromStorage()));
 
     const applyToken = useCallback((newToken) => {
@@ -26,12 +26,12 @@ export const AuthProvider = ({children, pollInterval = 1000}) => {
         }
 
         const newToken = typeof auth === 'string' ? auth : (auth.token ?? null);
-        const userObj = typeof auth === 'object' ? (auth.user ?? null) : null;
-        const providedUsername = userObj?.currentUser ?? auth.currentUser ?? null;
+        const loggedUser = typeof auth === 'object' ? (auth.currentUser ?? null) : null;
 
+        debugger
         if (newToken) {
             window.localStorage.setItem('token', newToken);
-            if (providedUsername) window.localStorage.setItem('currentUser', providedUsername);
+            if (loggedUser) window.localStorage.setItem('currentUser', JSON.stringify(loggedUser));
             applyToken(newToken);
         } else {
             window.localStorage.removeItem('token');
@@ -78,7 +78,7 @@ export const AuthProvider = ({children, pollInterval = 1000}) => {
     }, [applyToken, pollInterval]);
 
     useEffect(() => {
-        setCurrentUser(window.localStorage.getItem('currentUser'));
+        setCurrentUser(JSON.parse(window.localStorage.getItem('currentUser')) || null);
     }, [token]);
 
     const value = {

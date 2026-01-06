@@ -4,7 +4,7 @@ import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 
 const Header = () => {
-    const {isAuthenticated, user, logout} = useAuth();
+    const {isAuthenticated, currentUser, logout} = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
@@ -15,6 +15,8 @@ const Header = () => {
         setShowUserMenu(false);
         navigate("/");
     };
+
+    console.log(currentUser);
 
     const navLinks = [
         {path: "/", label: "Home", icon: <FaHome/>},
@@ -100,11 +102,11 @@ const Header = () => {
                                         <div className="avatar">
                                             <div
                                                 className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
-                                                {user?.username?.charAt(0)?.toUpperCase() || <FaUserCircle/>}
+                                                {currentUser?.username?.charAt(0)?.toUpperCase() || <FaUserCircle/>}
                                             </div>
                                         </div>
                                         <span className="hidden sm:inline font-medium max-w-[100px] truncate">
-                                            {user?.username || "Utilisateur"}
+                                            {currentUser?.username || "Utilisateur"}
                                         </span>
                                         <FaCaretDown
                                             className={`transition-transform ${showUserMenu ? 'rotate-180' : ''}`}/>
@@ -118,12 +120,12 @@ const Header = () => {
                                                     <div className="avatar">
                                                         <div
                                                             className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-lg">
-                                                            {user?.username?.charAt(0)?.toUpperCase() || "U"}
+                                                            {currentUser?.username?.charAt(0)?.toUpperCase() || "U"}
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <p className="font-bold">{user?.username || "Utilisateur"}</p>
-                                                        <p className="text-sm text-gray-500">{user?.email || ""}</p>
+                                                        <p className="font-bold">{currentUser?.username || "Utilisateur"}</p>
+                                                        <p className="text-sm text-gray-500">{currentUser?.email || ""}</p>
                                                     </div>
                                                 </div>
                                             </div>
