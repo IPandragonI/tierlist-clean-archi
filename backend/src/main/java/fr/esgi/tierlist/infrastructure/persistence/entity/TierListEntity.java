@@ -35,7 +35,12 @@ public class TierListEntity {
     @ToString.Exclude
     private List<ColumnEntity> columns;
 
-    @OneToMany(mappedBy = "tierList", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "tier_list_logos",
+            joinColumns = @JoinColumn(name = "tier_list_id"),
+            inverseJoinColumns = @JoinColumn(name = "logo_id")
+    )
     @ToString.Exclude
     private List<LogoEntity> logos;
 

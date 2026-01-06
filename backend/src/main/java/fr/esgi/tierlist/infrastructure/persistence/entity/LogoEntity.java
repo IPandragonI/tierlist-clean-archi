@@ -34,10 +34,6 @@ public class LogoEntity {
     @Column(name = "original_url")
     private String originalUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "tier_list_id")
-    private TierListEntity tierList;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
