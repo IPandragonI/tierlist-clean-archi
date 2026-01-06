@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TierListForm {
-    private Long id;
 
     @NotBlank(message = "Name is required")
     private String name;
