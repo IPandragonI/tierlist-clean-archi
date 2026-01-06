@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { FaLock, FaEye, FaEyeSlash, FaUser, FaSignInAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Urls from '../../api/Urls';
 import { useAuth } from '../../AuthProvider';
+import config from "../../api/apiConfig.js";
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +14,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(Urls.getFullUrl(Urls.auth.login), {
+            const res = await fetch(`${config.apiBaseUrl}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: formData.username, password: formData.password })

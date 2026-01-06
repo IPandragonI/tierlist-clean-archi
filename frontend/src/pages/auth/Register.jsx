@@ -4,6 +4,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Urls from '../../api/Urls';
 import { useAuth } from '../../AuthProvider';
+import config from "../../api/apiConfig.js";
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +34,7 @@ const RegisterPage = () => {
                 firstname: formData.firstname,
                 lastname: formData.lastname
             };
-            const res = await fetch(Urls.getFullUrl(Urls.auth.register), {
+            const res = await fetch(`${config.apiBaseUrl}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

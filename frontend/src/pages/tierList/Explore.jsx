@@ -1,41 +1,28 @@
-import React, { useState } from 'react';
-import { FaFire, FaStar, FaGamepad, FaFilm, FaMusic, FaUtensils, FaBook, FaFutbol, FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaStar, FaSearch, FaFilter, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import {Link} from "react-router-dom";
+import config from "../../api/apiConfig.js";
+
 
 const ExplorePage = () => {
     const [selectedCategory, setSelectedCategory] = useState('tendance');
+    const [categories, setCategories] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const categories = [
-        { id: 'tendance', name: 'Tendance', icon: <FaFire />, color: 'from-red-500 to-orange-500', items: ['Top TikTok 2024', 'Meilleures Séries Netflix', 'IA Tools Populaires'] },
-        { id: 'top-rated', name: 'Top Rated', icon: <FaStar />, color: 'from-yellow-500 to-amber-500', items: ['Classiques Cinéma', 'Jeux Éternels', 'Albums Légendaires'] },
-        { id: 'jeux', name: 'Jeux Vidéo', icon: <FaGamepad />, color: 'from-green-500 to-emerald-600', items: ['PS5 Exclusives', 'Jeux Indé 2024', 'Meilleurs RPG'] },
-        { id: 'films', name: 'Films & Séries', icon: <FaFilm />, color: 'from-blue-500 to-indigo-600', items: ['Marvel vs DC', 'Films d\'Animation', 'Horreur 2024'] },
-        { id: 'musique', name: 'Musique', icon: <FaMusic />, color: 'from-purple-500 to-pink-500', items: ['Artistes Hip-Hop', 'Festivals 2024', 'Nouveaux Albums'] },
-        { id: 'nourriture', name: 'Nourriture', icon: <FaUtensils />, color: 'from-orange-500 to-red-500', items: ['Restos Paris', 'Recettes Faciles', 'Cuisine du Monde'] },
-        { id: 'livres', name: 'Livres', icon: <FaBook />, color: 'from-amber-700 to-yellow-600', items: ['Best-Sellers', 'Fantasy Épique', 'Sci-Fi Modernes'] },
-        { id: 'sports', name: 'Sports', icon: <FaFutbol />, color: 'from-green-600 to-teal-500', items: ['Joueurs NBA', 'Équipes Football', 'Athlètes Olympiques'] },
-        { id: 'tech', name: 'Technologie', icon: <FaGamepad />, color: 'from-gray-700 to-gray-900', items: ['Smartphones 2024', 'Gadgets High-Tech', 'Applications'] },
-        { id: 'voyage', name: 'Voyage', icon: <FaStar />, color: 'from-cyan-500 to-blue-500', items: ['Destinations Pas Chères', 'Plages Paradisiaques', 'Villes Culturelles'] },
-    ];
+    useEffect(() => {
+        const fetchItems = async () => {
+            try {
+                const response = await fetch(`${config.apiBaseUrl}/categories`);
+                const data = await response.json();
+                setCategories(data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
 
-    const generateItems = (categoryId, count) => {
+        fetchItems();
 
-        return Array.from({ length: count }, (_, i) => ({
-            id: `${categoryId}-${i}`,
-            title: `${categories.find(c => c.id === categoryId)?.name || 'Item'} ${i + 1}`,
-            author: `@user${Math.floor(Math.random() * 1000)}`,
-            likes: Math.floor(Math.random() * 1000) + 100,
-            items: Math.floor(Math.random() * 20) + 5,
-            color: `bg-gradient-to-br ${categories.find(c => c.id === categoryId)?.color || 'from-gray-500 to-gray-700'}`,
-            imageUrl: `https://picsum.photos/seed/${categoryId}${i}/300/200`
-        }));
-    };
-
-    const allItems = categories.reduce((acc, category) => {
-        acc[category.id] = generateItems(category.id, 8);
-        return acc;
-    }, {});
+    }, []);
 
     const categoryScrollRef = React.useRef(null);
 
@@ -51,9 +38,13 @@ const ExplorePage = () => {
         }
     };
 
+    const allItems = {};
+    categories.forEach(category => {
+        allItems[category.id] = category.items;
+    });
+
     const filteredItems = allItems[selectedCategory]?.filter(item =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.author.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -117,9 +108,9 @@ const ExplorePage = () => {
                                 <button
                                     key={category.id}
                                     onClick={() => setSelectedCategory(category.id)}
-                                    className={`shrink-0 flex items-center space-x-3 px-6 py-4 rounded-xl transition-all duration-300 ${
+                                    className={`shrink-0 flex items-center space-x-3 px-6 py-4 rounded-xl transition-all duration-300 hover:cursor-pointer ${
                                         selectedCategory === category.id
-                                            ? `bg-linear-to-r ${category.color} text-white shadow-lg transform scale-105`
+                                            ? `bg-linear-to-r text-white shadow-lg transform scale-105 bg-gradient-to-r from-blue-600 to-purple-600`
                                             : 'bg-white text-gray-700 hover:bg-gray-50 shadow hover:shadow-md'
                                     }`}
                                 >

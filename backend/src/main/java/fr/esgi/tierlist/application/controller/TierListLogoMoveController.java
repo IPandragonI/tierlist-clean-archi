@@ -2,7 +2,6 @@ package fr.esgi.tierlist.application.controller;
 
 import fr.esgi.tierlist.application.dto.TierListLogoMoveDto;
 import fr.esgi.tierlist.application.form.TierListLogoMoveForm;
-import fr.esgi.tierlist.domain.model.TierList;
 import fr.esgi.tierlist.domain.model.TierListLogoMove;
 import fr.esgi.tierlist.domain.service.TierListLogoMoveService;
 import io.swagger.v3.oas.annotations.Operation;
