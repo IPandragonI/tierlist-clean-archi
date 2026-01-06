@@ -23,6 +23,14 @@ public class TierListLogoMoveJpaAdapter implements TierListLogoMoveDatasourcePor
     }
 
     @Override
+    public java.util.List<TierListLogoMove> findAllByTierListId(Long tierListId) {
+        var entities = tierListLogoMoveRepository.findAllByTierListId(tierListId);
+        return entities.stream()
+                .map(TierListLogoMoveMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public TierListLogoMove save(TierListLogoMove tierListLogoMove) {
         var entity = TierListLogoMoveMapper.toEntity(tierListLogoMove);
         var savedEntity = tierListLogoMoveRepository.save(entity);

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,10 +56,4 @@ public class TierListController {
         tierListService.delete(id);
     }
 
-    @PostMapping("/export/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Export Tier List by ID")
-    public String export(@PathVariable Long id) {
-        return tierListService.export(id);
-    }
 }

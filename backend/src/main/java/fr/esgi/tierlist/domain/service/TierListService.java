@@ -63,13 +63,4 @@ public class TierListService {
     public void delete(Long id) {
         tierListDatasourcePort.deleteById(id);
     }
-
-    public String export(Long id) {
-        TierList tierList = findById(id);
-        if (tierList == null) {
-            throw new IllegalArgumentException("Tier List not found with id: " + id);
-        }
-        //TODO: create pdf and return bucket pdf link
-        return "PDF export functionality is not yet implemented.";
-    }
 }
