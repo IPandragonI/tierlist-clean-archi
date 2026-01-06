@@ -4,14 +4,18 @@ import fr.esgi.tierlist.domain.model.User;
 import fr.esgi.tierlist.application.form.UserForm;
 import fr.esgi.tierlist.domain.port.UserDatasourcePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserDatasourcePort userDatasourcePort;
 
@@ -40,5 +44,17 @@ public class UserService {
 
     public void delete(Long id) {
         userDatasourcePort.deleteById(id);
+    }
+
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User Not Found with username: " + username);
+        }
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.emptyList()
+        );
     }
 }
