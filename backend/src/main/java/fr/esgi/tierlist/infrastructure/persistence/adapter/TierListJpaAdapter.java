@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Transactional
-public class TierListAdapter implements TierListDatasourcePort {
+public class TierListJpaAdapter implements TierListDatasourcePort {
 
     private final TierListRepository tierListRepository;
 

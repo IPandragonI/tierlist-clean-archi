@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Transactional
-public class UserAdapter implements UserDatasourcePort {
+public class UserJpaAdapter implements UserDatasourcePort {
 
     private final UserRepository userRepository;
 

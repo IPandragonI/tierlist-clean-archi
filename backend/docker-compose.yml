@@ -32,5 +32,16 @@ services:
     ports:
       - "8081:80"
 
+  minio:
+    image: minio/minio:latest
+    container_name: tierlist-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadminpass
+    command: 'minio server /data --console-address ":9001"'
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
 volumes:
   db_data:
