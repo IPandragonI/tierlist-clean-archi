@@ -55,4 +55,10 @@ public class TierListController {
         tierListService.delete(id);
     }
 
+    @PostMapping("/export/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Export Tier List by ID")
+    public String export(@PathVariable Long id) {
+        return tierListService.export(id);
+    }
 }

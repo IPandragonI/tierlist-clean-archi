@@ -33,9 +33,9 @@ public class LogoController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get logo by ID")
-    public ResponseEntity<LogoDto> getById(@PathVariable Long id) {
-        Logo logo = logoService.getById(id);
+    @Operation(summary = "Find logo by ID")
+    public ResponseEntity<LogoDto> findById(@PathVariable Long id) {
+        Logo logo = logoService.findById(id);
         return ResponseEntity.ok(LogoDto.transfer(logo));
     }
 

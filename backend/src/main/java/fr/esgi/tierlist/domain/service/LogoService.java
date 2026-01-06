@@ -78,7 +78,7 @@ public class LogoService {
                 .toList();
     }
 
-    public Logo getById(Long id) {
+    public Logo findById(Long id) {
         return logoDatasourcePort.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Logo not found with id: " + id));
     }
@@ -99,7 +99,7 @@ public class LogoService {
     }
 
     public void delete(Long id) {
-        Logo logo = getById(id);
+        Logo logo = findById(id);
 
         if (logo.getStoredUrl() != null && !logo.getStoredUrl().isEmpty()) {
             String objectName = "logos/" + logo.getDomain() + ".png";

@@ -1,10 +1,7 @@
 package fr.esgi.tierlist.config;
 
 import fr.esgi.tierlist.domain.port.*;
-import fr.esgi.tierlist.domain.service.ColumnService;
-import fr.esgi.tierlist.domain.service.LogoService;
-import fr.esgi.tierlist.domain.service.TierListService;
-import fr.esgi.tierlist.domain.service.UserService;
+import fr.esgi.tierlist.domain.service.*;
 import fr.esgi.tierlist.infrastructure.security.IAuthenticationFacade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,5 +33,20 @@ public class BeanConfiguration {
     @Bean
     public ColumnService columnService(ColumnDatasourcePort columnDatasourcePort) {
         return new ColumnService(columnDatasourcePort);
+    }
+
+    @Bean
+    public TierListLogoMoveService tierListLogoService(TierListLogoMoveDatasourcePort tierListLogoDatasourcePort,
+                                                       TierListDatasourcePort tierListDatasourcePort,
+                                                       ColumnDatasourcePort columnDatasourcePort,
+                                                       LogoDatasourcePort logoDatasourcePort,
+                                                       LogoProviderPort logoProviderPort,
+                                                       ObjectStoragePort objectStoragePort,
+                                                       IAuthenticationFacade authenticationFacade) {
+        return new TierListLogoMoveService(tierListLogoDatasourcePort,
+                tierListService(tierListDatasourcePort, columnDatasourcePort, logoDatasourcePort, logoProviderPort, objectStoragePort, authenticationFacade),
+                columnService(columnDatasourcePort),
+                logoService(logoDatasourcePort, logoProviderPort, objectStoragePort),
+                authenticationFacade);
     }
 }

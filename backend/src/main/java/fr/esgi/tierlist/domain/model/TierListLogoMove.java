@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class TierListLogo {
+public class TierListLogoMove {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
@@ -26,6 +26,4 @@ public class TierListLogo {
     private Column column;
 
     private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
