@@ -19,7 +19,6 @@ const Header = () => {
     console.log(currentUser);
 
     const navLinks = [
-        {path: "/", label: "Home", icon: <FaHome/>},
         {path: "/tierlist/explore", label: "Explore", icon: <FaChartBar/>},
         {path: "/tierlist/new", label: "Create", icon: <FaPlus/>},
     ];
@@ -130,7 +129,7 @@ const Header = () => {
                                                 </div>
                                             </div>
 
-                                            <ul className="menu p-2">
+                                            <ul className="menu p-2 w-full">
                                                 <li>
                                                     <Link
                                                         to="/profile"
