@@ -150,7 +150,7 @@ const Header = () => {
                                                 </li>
                                                 <li>
                                                     <Link
-                                                        to="/settings"
+                                                        to="/profile/settings"
                                                         onClick={() => setShowUserMenu(false)}
                                                         className="flex items-center gap-3 py-3"
                                                     >

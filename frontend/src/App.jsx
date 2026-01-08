@@ -10,6 +10,7 @@ import ExplorePage from "./pages/tierList/Explore.jsx";
 import ProfileLayout from "./pages/profile/Layout.jsx";
 import ProfilePage from "./pages/profile/Profile.jsx";
 import MyTierListsPage from "./pages/profile/TierList.jsx";
+import ProfileSettingsPage from "./pages/profile/Settings.jsx";
 
 const App = () => {
     return (
@@ -28,6 +29,7 @@ const App = () => {
                     <Route path="/profile" element={<ProfileLayout />}>
                         <Route index element={<ProfilePage />} />
                         <Route path="my-tierlists" element={<MyTierListsPage />} />
+                        <Route path="settings" element={<ProfileSettingsPage />} />
                     </Route>
 
                     <Route path="/auth">
