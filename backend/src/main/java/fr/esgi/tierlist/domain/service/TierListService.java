@@ -46,6 +46,10 @@ public class TierListService {
         return tierListDatasourcePort.save(tierList);
     }
 
+    public List<TierList> findAll() {
+        return tierListDatasourcePort.findAll();
+    }
+
     public TierList findById(Long id) {
         return tierListDatasourcePort.findById(id).orElse(null);
     }

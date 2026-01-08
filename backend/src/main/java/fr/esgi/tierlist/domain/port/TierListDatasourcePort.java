@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TierListDatasourcePort {
+    List<TierList> findAll();
     Optional<TierList> findById(Long id);
     Optional<TierList> findByCreatorId(Long creatorId);
     List<TierList> findByCategoryId(Long categoryId);

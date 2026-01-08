@@ -19,6 +19,13 @@ public class TierListJpaAdapter implements TierListDatasourcePort {
     private final TierListRepository tierListRepository;
 
     @Override
+    public List<TierList> findAll() {
+        return tierListRepository.findAll().stream()
+                .map(TierListMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<TierList> findById(Long id) {
         return tierListRepository.findById(id).map(TierListMapper::toDomain);
     }

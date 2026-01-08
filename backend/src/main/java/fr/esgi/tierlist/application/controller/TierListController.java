@@ -26,6 +26,14 @@ public class TierListController {
         return TierListDto.transfer(tierList);
     }
 
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Find all Tier List")
+    public TierListDto findAll() {
+        TierList tierList = tierListService.findAll();
+        return TierListDto.transfer(tierList);
+    }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Find Tier List by ID")
