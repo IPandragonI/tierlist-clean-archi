@@ -19,8 +19,6 @@ public class Column {
 
     private String name;
 
-    private TierList tierList;
-
     private int position;
 
     private LocalDateTime createdAt;

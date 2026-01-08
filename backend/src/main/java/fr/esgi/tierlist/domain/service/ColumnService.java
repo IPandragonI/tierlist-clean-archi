@@ -15,17 +15,16 @@ public class ColumnService {
 
     private final ColumnDatasourcePort columnDatasourcePort;
 
-    public Column create(ColumnForm columnForm, TierList tierList) {
+    public Column create(ColumnForm columnForm) {
         Column column = new Column();
         column.setName(columnForm.getName());
         column.setPosition(columnForm.getPosition());
-        column.setTierList(tierList);
         return columnDatasourcePort.save(column);
     }
 
-    public List<Column> createAll(List<ColumnForm> columnForms, TierList tierList) {
+    public List<Column> createAll(List<ColumnForm> columnForms) {
         return columnForms.stream()
-                .map(form -> create(form, tierList))
+                .map(this::create)
                 .toList();
     }
 
@@ -34,11 +33,10 @@ public class ColumnService {
                 .orElseThrow(() -> new IllegalArgumentException("Column not found with id: " + id));
     }
 
-    public Column update(Long id, ColumnForm columnForm, TierList tierList) {
+    public Column update(Long id, ColumnForm columnForm) {
         Column column = findById(id);
         column.setName(columnForm.getName());
         column.setPosition(columnForm.getPosition());
-        column.setTierList(tierList);
         return columnDatasourcePort.save(column);
     }
 
@@ -49,7 +47,7 @@ public class ColumnService {
                             .filter(col -> col.getName().equals(form.getName()))
                             .findFirst()
                             .orElseThrow(() -> new IllegalArgumentException("Column not found with name: " + form.getName()));
-                    return update(existingColumn.getId(), form, tierList);
+                    return update(existingColumn.getId(), form);
                 })
                 .toList();
     }

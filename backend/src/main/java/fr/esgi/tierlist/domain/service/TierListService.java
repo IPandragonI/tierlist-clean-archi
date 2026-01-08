@@ -10,6 +10,7 @@ import fr.esgi.tierlist.infrastructure.security.IAuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,21 +28,21 @@ public class TierListService {
         TierList tierList = new TierList();
         tierList.setName(tierListform.getName());
         tierList.setCreator(authenticationFacade.getCurrentUser());
-        tierList.setColumns(List.of());
-        tierList.setLogos(List.of());
+        tierList.setColumns(new ArrayList<>());
+        tierList.setLogos(new ArrayList<>());
+
+        if (tierListform.getCategoryId() != null) {
+            Category category = categoryService.findById(tierListform.getCategoryId());
+            tierList.setCategory(category);
+        }
 
         TierList savedTierList = tierListDatasourcePort.save(tierList);
 
-        List<Column> columns = columnService.createAll(tierListform.getColumns(), savedTierList);
+        List<Column> columns = columnService.createAll(tierListform.getColumns());
         savedTierList.setColumns(columns);
 
         List<Logo> logos = logoService.getOrCreateAll(tierListform.getLogos());
         savedTierList.setLogos(logos);
-
-        if (tierListform.getCategoryId() != null) {
-            Category category = categoryService.findById(tierListform.getCategoryId());
-            savedTierList.setCategory(category);
-        }
 
         return tierListDatasourcePort.save(savedTierList);
     }
