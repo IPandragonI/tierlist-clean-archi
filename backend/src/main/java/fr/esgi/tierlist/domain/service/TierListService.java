@@ -1,9 +1,6 @@
 package fr.esgi.tierlist.domain.service;
 
-import fr.esgi.tierlist.domain.model.Category;
-import fr.esgi.tierlist.domain.model.Column;
-import fr.esgi.tierlist.domain.model.Logo;
-import fr.esgi.tierlist.domain.model.TierList;
+import fr.esgi.tierlist.domain.model.*;
 import fr.esgi.tierlist.application.form.TierListForm;
 import fr.esgi.tierlist.domain.port.TierListDatasourcePort;
 import fr.esgi.tierlist.infrastructure.security.IAuthenticationFacade;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +23,14 @@ public class TierListService {
     private final IAuthenticationFacade authenticationFacade;
 
     public TierList create(TierListForm tierListform) {
+        User currentUser = authenticationFacade.getCurrentUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
         TierList tierList = new TierList();
         tierList.setName(tierListform.getName());
-        tierList.setCreator(authenticationFacade.getCurrentUser());
+        tierList.setCreator(currentUser);
         tierList.setColumns(new ArrayList<>());
         tierList.setLogos(new ArrayList<>());
 
@@ -38,11 +41,18 @@ public class TierListService {
 
         TierList savedTierList = tierListDatasourcePort.save(tierList);
 
-        List<Column> columns = columnService.createAll(tierListform.getColumns());
-        savedTierList.setColumns(columns);
+        List<Column> columns = tierListform.getColumns().stream()
+                .map(form -> {
+                    Column column = new Column();
+                    column.setName(form.getName());
+                    column.setPosition(form.getPosition());
+                    return column;
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+        tierList.setColumns(columns);
 
         List<Logo> logos = logoService.getOrCreateAll(tierListform.getLogos());
-        savedTierList.setLogos(logos);
+        tierList.setLogos(logos);
 
         return tierListDatasourcePort.save(savedTierList);
     }

@@ -15,17 +15,12 @@ public class ColumnService {
 
     private final ColumnDatasourcePort columnDatasourcePort;
 
-    public Column create(ColumnForm columnForm) {
+    public Column create(ColumnForm columnForm, Long tierListId) {
         Column column = new Column();
         column.setName(columnForm.getName());
         column.setPosition(columnForm.getPosition());
+        column.setTierListId(tierListId);
         return columnDatasourcePort.save(column);
-    }
-
-    public List<Column> createAll(List<ColumnForm> columnForms) {
-        return columnForms.stream()
-                .map(this::create)
-                .toList();
     }
 
     public Column findById(Long id) {

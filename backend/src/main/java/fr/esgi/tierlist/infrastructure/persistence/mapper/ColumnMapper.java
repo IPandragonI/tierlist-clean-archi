@@ -11,6 +11,9 @@ public record ColumnMapper() {
         column.setId(entity.getId());
         column.setName(entity.getName());
         column.setPosition(entity.getPosition());
+        if (entity.getTierList() != null) {
+            column.setTierListId(entity.getTierList().getId());
+        }
         column.setCreatedAt(entity.getCreatedAt());
         column.setUpdatedAt(entity.getUpdatedAt());
         return column;

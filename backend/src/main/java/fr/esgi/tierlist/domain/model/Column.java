@@ -21,6 +21,9 @@ public class Column {
 
     private int position;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long tierListId;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

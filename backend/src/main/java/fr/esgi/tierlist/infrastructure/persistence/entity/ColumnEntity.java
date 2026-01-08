@@ -23,7 +23,6 @@ public class ColumnEntity {
     @Column
     private String name;
 
-    //TODO Il y a une stackoverflow à cause d'une reference circulaire entre les colonnes et les tierlists
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tier_list_id", nullable = false)
     @ToString.Exclude
