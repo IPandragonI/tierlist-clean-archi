@@ -28,7 +28,6 @@ export const AuthProvider = ({children, pollInterval = 1000}) => {
         const newToken = typeof auth === 'string' ? auth : (auth.token ?? null);
         const loggedUser = typeof auth === 'object' ? (auth.currentUser ?? null) : null;
 
-        debugger
         if (newToken) {
             window.localStorage.setItem('token', newToken);
             if (loggedUser) window.localStorage.setItem('currentUser', JSON.stringify(loggedUser));

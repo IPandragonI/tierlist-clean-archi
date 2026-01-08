@@ -138,14 +138,9 @@ const ExplorePage = () => {
                                 {categories.find(c => c.id === selectedCategory)?.name}
                             </h3>
                             <p className="text-gray-600">
-                                {filteredItems?.length} classements disponibles
+                                {filteredItems?.length ?? 0} classements disponibles
                             </p>
                         </div>
-                        <select className="select select-bordered rounded-xl">
-                            <option>Plus populaires</option>
-                            <option>Plus récents</option>
-                            <option>Plus de likes</option>
-                        </select>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -160,7 +155,7 @@ const ExplorePage = () => {
                                         alt={item.title}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
-                                    <div className={`absolute inset-0 bg-linear-to-t ${item.color} opacity-60`}></div>
+                                    <div className={`absolute inset-0 bg-linear-to-t opacity-60`}></div>
                                     <div className="absolute top-4 right-4">
                                         <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
                                             <FaStar className="text-yellow-500" />
