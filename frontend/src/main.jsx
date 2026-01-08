@@ -5,11 +5,14 @@ import './styles/global.css'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {AuthProvider} from "./AuthProvider.jsx";
+import {ThemeProvider} from "./ThemeProvider.jsx";
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <AuthProvider>
-            <App/>
+            <ThemeProvider>
+                <App/>
+            </ThemeProvider>
         </AuthProvider>
         <ToastContainer position="top-right" autoClose={5000}/>
     </StrictMode>,
