@@ -16,7 +16,11 @@ const MyTierListsPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
     const [activeListId, setActiveListId] = useState(null);
+    const [tierLists, setTierLists] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
     const {currentUser} = useAuth();
+
+    const itemsPerPage = 9;
 
     useEffect(() => {
         fetchTierLists()
@@ -29,108 +33,16 @@ const MyTierListsPage = () => {
 
         const data = await response.json();
 
-        console.log(data);
-    }
-
-    const [tierLists, setTierLists] = useState([
-        {
-            id: 1,
-            title: "Top Films 2024",
-            description: "Mon classement des meilleurs films de l'année",
-            category: "Films",
-            createdAt: "2024-01-15",
-            updatedAt: "2024-02-20",
-            itemsCount: 25,
-            likes: 156,
-            views: 1245,
-            privacy: "public",
-            thumbnail: "https://picsum.photos/seed/film1/400/250",
-            isFeatured: true,
-            isDraft: false
-        },
-        {
-            id: 2,
-            title: "Jeux PS5 Essentiels",
-            description: "Les jeux à absolument avoir sur PS5",
-            category: "Jeux Vidéo",
-            createdAt: "2024-01-10",
-            updatedAt: "2024-02-18",
-            itemsCount: 15,
-            likes: 89,
-            views: 567,
-            privacy: "public",
-            thumbnail: "https://picsum.photos/seed/game1/400/250",
-            isFeatured: false,
-            isDraft: false
-        },
-        {
-            id: 3,
-            title: "Restaurants Paris",
-            description: "Mes adresses préférées à Paris",
-            category: "Nourriture",
-            createdAt: "2024-02-01",
-            updatedAt: "2024-02-01",
-            itemsCount: 30,
-            likes: 45,
-            views: 234,
-            privacy: "private",
-            thumbnail: "https://picsum.photos/seed/food1/400/250",
-            isFeatured: false,
-            isDraft: false
-        },
-        {
-            id: 4,
-            title: "Artistes Hip-Hop 2024",
-            description: "Classement en cours de création",
-            category: "Musique",
-            createdAt: "2024-02-25",
-            updatedAt: "2024-02-25",
-            itemsCount: 8,
-            likes: 0,
-            views: 0,
-            privacy: "private",
-            thumbnail: null,
-            isFeatured: false,
-            isDraft: true
-        },
-        {
-            id: 5,
-            title: "Marques de Smartphones",
-            description: "Comparaison des meilleures marques",
-            category: "Technologie",
-            createdAt: "2024-01-05",
-            updatedAt: "2024-02-10",
-            itemsCount: 12,
-            likes: 67,
-            views: 456,
-            privacy: "public",
-            thumbnail: "https://picsum.photos/seed/tech1/400/250",
-            isFeatured: true,
-            isDraft: false
-        },
-        {
-            id: 6,
-            title: "Séries Netflix à voir",
-            description: "Ma watchlist personnelle",
-            category: "Séries",
-            createdAt: "2024-02-15",
-            updatedAt: "2024-02-20",
-            itemsCount: 20,
-            likes: 34,
-            views: 189,
-            privacy: "shared",
-            thumbnail: "https://picsum.photos/seed/series1/400/250",
-            isFeatured: false,
-            isDraft: false
+        if (response.ok) {
+            setTierLists(data)
         }
-    ]);
+    }
 
     const filteredLists = tierLists
         .filter(list => {
             const matchesSearch =
-                list.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                list.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                list.category.toLowerCase().includes(searchQuery.toLowerCase());
+                list.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                list.category.name.toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesFilter =
                 filterStatus === 'all'
@@ -154,6 +66,19 @@ const MyTierListsPage = () => {
             }
         });
 
+    const totalPages = Math.ceil(filteredLists.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedLists = filteredLists.slice(startIndex, startIndex + itemsPerPage);
+
+    // Réinitialiser à la page 1 lors du filtrage/tri
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, filterStatus, sortBy]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
+    };
+
     const toggleSelectList = (id) => {
         setSelectedLists(prev =>
             prev.includes(id)
@@ -171,12 +96,6 @@ const MyTierListsPage = () => {
             setSelectedLists([]);
         }
         setShowDeleteModal(false);
-    };
-
-    const handleChangePrivacy = (id, privacy) => {
-        setTierLists(prev => prev.map(list =>
-            list.id === id ? { ...list, privacy } : list
-        ));
     };
 
     const handleExport = (id) => {
@@ -390,9 +309,9 @@ const MyTierListsPage = () => {
                     )}
                 </div>
 
-                {filteredLists.length > 0 ? (
+                {paginatedLists.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredLists.map((list) => (
+                        {paginatedLists.map((list) => (
                             <div
                                 key={list.id}
                                 className={`bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300 ${
@@ -478,7 +397,7 @@ const MyTierListsPage = () => {
 
                                 <div className="p-4">
                                     <div className="flex justify-between items-center mb-3">
-                                        <span className="badge badge-outline">{list.category}</span>
+                                        <span className="badge badge-outline">{list.category.name}</span>
                                         <div className="text-sm text-gray-500">
                                             <FaCalendar className="inline mr-1" />
                                             {new Date(list.updatedAt).toLocaleDateString()}
@@ -517,15 +436,32 @@ const MyTierListsPage = () => {
                     </div>
                 )}
 
-                {filteredLists.length > 0 && (
+                {totalPages > 1 && (
                     <div className="flex justify-center mt-8">
                         <div className="join">
-                            <button className="join-item btn btn-outline">«</button>
-                            <button className="join-item btn btn-active">1</button>
-                            <button className="join-item btn btn-outline">2</button>
-                            <button className="join-item btn btn-outline">3</button>
-                            <button className="join-item btn btn-outline">4</button>
-                            <button className="join-item btn btn-outline">»</button>
+                            <button
+                                className="join-item btn btn-outline"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                «
+                            </button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    className={`join-item btn ${currentPage === page ? 'btn-active' : 'btn-outline'}`}
+                                    onClick={() => handlePageChange(page)}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                            <button
+                                className="join-item btn btn-outline"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                »
+                            </button>
                         </div>
                     </div>
                 )}

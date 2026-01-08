@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { FaTrash, FaPlus, FaSpinner } from 'react-icons/fa';
+import React, {useEffect, useState} from 'react';
+import {FaPlus, FaSpinner, FaTrash} from 'react-icons/fa';
 import config from "../../api/apiConfig.js";
 
-const emptyLogo = () => ({ domain: '' });
-const emptyColumn = () => ({ name: '', position: 0 });
+const emptyLogo = () => ({domain: ''});
+const defaultColumns = () => ([
+    {name: 'S', position: 0},
+    {name: 'A', position: 1},
+    {name: 'B', position: 2},
+    {name: 'C', position: 3},
+    {name: 'D', position: 4},
+    {name: 'E', position: 5},
+    {name: 'F', position: 6},
+])
 
-export default function TierListCreate({ onSuccess }) {
+export default function TierListCreate({onSuccess}) {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const [name, setName] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [logos, setLogos] = useState([emptyLogo()]);
-    const [columns, setColumns] = useState([emptyColumn()]);
+    const [columns, setColumns] = useState(defaultColumns());
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
     const [serverError, setServerError] = useState(null);
@@ -74,7 +82,7 @@ export default function TierListCreate({ onSuccess }) {
 
     const handleLogoChange = (index, value) => {
         setLogos(prev => prev.map((l, idx) =>
-            idx === index ? { ...l, domain: value } : l
+            idx === index ? {...l, domain: value} : l
         ));
     };
 
@@ -82,7 +90,7 @@ export default function TierListCreate({ onSuccess }) {
         const nextPosition = columns.length > 0
             ? Math.max(...columns.map(c => c.position)) + 1
             : 0;
-        setColumns(prev => [...prev, { name: '', position: nextPosition }]);
+        setColumns(prev => [...prev, {name: '', position: nextPosition}]);
     };
 
     const handleRemoveColumn = (index) => {
@@ -93,7 +101,7 @@ export default function TierListCreate({ onSuccess }) {
 
     const handleColumnChange = (index, field, value) => {
         setColumns(prev => prev.map((col, idx) =>
-            idx === index ? { ...col, [field]: value } : col
+            idx === index ? {...col, [field]: value} : col
         ));
     };
 
@@ -104,7 +112,7 @@ export default function TierListCreate({ onSuccess }) {
 
         const payload = {
             name: name.trim(),
-            logos: logos.map(l => ({ domain: l.domain.trim() })),
+            logos: logos.map(l => ({domain: l.domain.trim()})),
             columns: columns.map(c => ({
                 name: String(c.name).trim(),
                 position: Number(c.position)
@@ -126,7 +134,7 @@ export default function TierListCreate({ onSuccess }) {
                 setName('');
                 setCategoryId('');
                 setLogos([emptyLogo()]);
-                setColumns([emptyColumn()]);
+                setColumns([defaultColumns()])
                 setErrors({});
                 setServerError(null);
             } else if (res.status === 400) {
@@ -201,9 +209,11 @@ export default function TierListCreate({ onSuccess }) {
                             </label>
                             <div className="relative">
                                 {loading ? (
-                                    <div className="flex items-center justify-center px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
-                                        <FaSpinner className="animate-spin text-gray-400 dark:text-gray-500 mr-2" />
-                                        <span className="text-gray-500 dark:text-gray-400">Chargement des catégories...</span>
+                                    <div
+                                        className="flex items-center justify-center px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700">
+                                        <FaSpinner className="animate-spin text-gray-400 dark:text-gray-500 mr-2"/>
+                                        <span
+                                            className="text-gray-500 dark:text-gray-400">Chargement des catégories...</span>
                                     </div>
                                 ) : (
                                     <select
@@ -224,8 +234,10 @@ export default function TierListCreate({ onSuccess }) {
                                     </select>
                                 )}
                                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </div>
                             </div>
@@ -247,7 +259,7 @@ export default function TierListCreate({ onSuccess }) {
                                 onClick={handleAddLogo}
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200 font-medium"
                             >
-                                <FaPlus className="text-sm" />
+                                <FaPlus className="text-sm"/>
                                 Ajouter un logo
                             </button>
                         </div>
@@ -290,7 +302,7 @@ export default function TierListCreate({ onSuccess }) {
                                         }`}
                                         title={logos.length <= 1 ? "Au moins un logo est requis" : "Supprimer ce logo"}
                                     >
-                                        <FaTrash />
+                                        <FaTrash/>
                                     </button>
                                 </div>
                             ))}
@@ -312,16 +324,18 @@ export default function TierListCreate({ onSuccess }) {
                                 onClick={handleAddColumn}
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800 transition-colors duration-200 font-medium"
                             >
-                                <FaPlus className="text-sm" />
+                                <FaPlus className="text-sm"/>
                                 Ajouter une colonne
                             </button>
                         </div>
 
                         <div className="space-y-4">
                             {columns.map((column, index) => (
-                                <div key={index} className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700">
+                                <div key={index}
+                                     className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label
+                                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Nom de la colonne *
                                         </label>
                                         <input
@@ -341,7 +355,8 @@ export default function TierListCreate({ onSuccess }) {
                                         )}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <label
+                                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Position *
                                         </label>
                                         <input
@@ -381,7 +396,8 @@ export default function TierListCreate({ onSuccess }) {
                     </div>
 
                     {serverError && (
-                        <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                        <div
+                            className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                             <p className="text-red-700 dark:text-red-400 font-medium">
                                 {serverError}
                             </p>
@@ -414,7 +430,7 @@ export default function TierListCreate({ onSuccess }) {
                             >
                                 {submitting ? (
                                     <span className="flex items-center gap-2">
-                                        <FaSpinner className="animate-spin" />
+                                        <FaSpinner className="animate-spin"/>
                                         Création en cours...
                                     </span>
                                 ) : (
