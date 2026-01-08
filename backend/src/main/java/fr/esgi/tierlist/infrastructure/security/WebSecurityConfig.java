@@ -52,8 +52,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                //TODO: a fix
-                                .requestMatchers("/api/*", "/api/auth/**", "/v3/**", "/swagger-ui/**", "/api/categories/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/v3/**", "/swagger-ui/**", "/api/categories/**").permitAll()
                                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
