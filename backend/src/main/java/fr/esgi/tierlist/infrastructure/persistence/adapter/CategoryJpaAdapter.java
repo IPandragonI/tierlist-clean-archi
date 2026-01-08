@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,7 +24,7 @@ public class CategoryJpaAdapter implements CategoryDatasourcePort {
     }
 
     @Override
-    public java.util.List<Category> findAll() {
+    public List<Category> findAll() {
         var categoryEntities = categoryRepository.findAll();
         return categoryEntities.stream().map(CategoryMapper::toDomain).toList();
     }

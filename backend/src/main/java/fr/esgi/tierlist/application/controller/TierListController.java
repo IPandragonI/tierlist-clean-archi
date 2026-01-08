@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tier-lists")
@@ -38,6 +40,14 @@ public class TierListController {
     public TierListDto findByCreatorId(@PathVariable Long creatorId) {
         TierList tierList = tierListService.findByCreatorId(creatorId);
         return TierListDto.transfer(tierList);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Find Tier List by category ID")
+    public List<TierListDto> findByCategoryId(@PathVariable Long categoryId) {
+        List<TierList> tierLists = tierListService.findByCategoryId(categoryId);
+        return tierLists.stream().map(TierListDto::transfer).toList();
     }
 
     @PutMapping("/{id}")

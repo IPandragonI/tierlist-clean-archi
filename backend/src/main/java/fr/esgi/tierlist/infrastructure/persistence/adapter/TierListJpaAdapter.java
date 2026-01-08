@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +26,13 @@ public class TierListJpaAdapter implements TierListDatasourcePort {
     @Override
     public Optional<TierList> findByCreatorId(Long creatorId) {
         return tierListRepository.findByCreatorId(creatorId).map(TierListMapper::toDomain);
+    }
+
+    @Override
+    public List<TierList> findByCategoryId(Long categoryId) {
+        return tierListRepository.findByCategoryId(categoryId).stream()
+                .map(TierListMapper::toDomain)
+                .toList();
     }
 
     @Override
