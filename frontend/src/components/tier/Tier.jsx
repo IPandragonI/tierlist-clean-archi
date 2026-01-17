@@ -3,7 +3,7 @@ import {horizontalListSortingStrategy, SortableContext} from "@dnd-kit/sortable"
 import React from "react";
 import SortableItem from "./SortableItem.jsx";
 
-const Tier = ({id, title, color, items, handleRemove}) => {
+const Tier = ({id, title, color, items}) => {
     const {setNodeRef, isOver} = useDroppable({
         id,
         data: {type: 'tier', title}
@@ -21,7 +21,7 @@ const Tier = ({id, title, color, items, handleRemove}) => {
                 <SortableContext items={items.map(item => item.id)} strategy={horizontalListSortingStrategy}>
                     <div className="flex gap-1 flex-wrap">
                         {items.map((item) => (
-                            <SortableItem key={item.id} id={item.id} item={item} handleRemove={handleRemove}/>
+                            <SortableItem key={item.id} id={item.id} item={item}/>
                         ))}
                     </div>
                 </SortableContext>

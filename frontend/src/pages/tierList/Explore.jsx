@@ -71,6 +71,7 @@ const ExplorePage = () => {
     const filteredItems = tierListsByCategory[selectedCategory]?.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
+    console.log(filteredItems);
 
     return (
         <div className="min-h-screen bg-linear-to-b from-gray-50 to-gray-100">
@@ -173,16 +174,12 @@ const ExplorePage = () => {
                             >
                                 <div className="relative h-48 overflow-hidden">
                                     <img
-                                        src={item.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
+                                        src={item.logo[0]?.storedUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
                                         alt={item.name}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
                                     <div className={`absolute inset-0 bg-linear-to-t opacity-60`}></div>
                                     <div className="absolute top-4 right-4">
-                                        <button
-                                            className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
-                                            <FaStar className="text-yellow-500"/>
-                                        </button>
                                     </div>
                                 </div>
 
@@ -201,12 +198,8 @@ const ExplorePage = () => {
                                     <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                                         <div className="flex items-center space-x-4">
                                             <div className="flex items-center">
-                                                <FaStar className="text-yellow-500 mr-1"/>
-                                                <span className="text-sm font-semibold">0</span>
-                                            </div>
-                                            <div className="flex items-center">
                                                 <span
-                                                    className="text-sm text-gray-500">{item.columns?.length || 0} items</span>
+                                                    className="text-sm text-gray-500">{item.logo?.length || 0} logos</span>
                                             </div>
                                         </div>
                                         <Link to={'/tierlist/' + item.id}

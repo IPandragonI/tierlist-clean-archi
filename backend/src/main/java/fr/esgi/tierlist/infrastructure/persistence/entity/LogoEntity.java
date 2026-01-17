@@ -28,10 +28,10 @@ public class LogoEntity {
     @Column
     private String domain;
 
-    @Column(name = "stored_url")
+    @Column(name = "stored_url", columnDefinition = "TEXT")
     private String storedUrl;
 
-    @Column(name = "original_url")
+    @Column(name = "original_url", columnDefinition = "TEXT")
     private String originalUrl;
 
     @Column(name = "created_at", updatable = false)

@@ -32,7 +32,7 @@ public class MinioObjectStorageAdapter implements ObjectStoragePort {
                             .build()
             );
 
-            return generateObjectUrl(bucketName, objectName);
+            return generatePresignedUrl(bucketName, objectName, 7 * 24 * 60 * 60);
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload file to MinIO: " + objectName, e);
         }
@@ -111,11 +111,6 @@ public class MinioObjectStorageAdapter implements ObjectStoragePort {
                             .bucket(bucketName)
                             .build()
             );
-
         }
-    }
-
-    private String generateObjectUrl(String bucketName, String objectName) {
-        return String.format("http://localhost:9000/%s/%s", bucketName, objectName);
     }
 }

@@ -84,8 +84,17 @@ public class LogoService {
     }
 
     public Logo findById(Long id) {
-        return logoDatasourcePort.findById(id)
+        Logo logo = logoDatasourcePort.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Logo not found with id: " + id));
+
+        if (logo.getStoredUrl() != null && !logo.getStoredUrl().contains("X-Amz-")) {
+            String objectName = "logos/" + logo.getDomain() + ".png";
+            String newUrl = objectStoragePort.generatePresignedUrl(BUCKET_NAME, objectName, 7 * 24 * 60 * 60);
+            logo.setStoredUrl(newUrl);
+            logoDatasourcePort.save(logo);
+        }
+
+        return logo;
     }
 
     public Optional<Logo> getByDomain(String domain) {

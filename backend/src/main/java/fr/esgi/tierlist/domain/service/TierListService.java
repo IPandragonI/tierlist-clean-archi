@@ -39,8 +39,6 @@ public class TierListService {
             tierList.setCategory(category);
         }
 
-        TierList savedTierList = tierListDatasourcePort.save(tierList);
-
         List<Column> columns = tierListform.getColumns().stream()
                 .map(form -> {
                     Column column = new Column();
@@ -54,7 +52,7 @@ public class TierListService {
         List<Logo> logos = logoService.getOrCreateAll(tierListform.getLogos());
         tierList.setLogos(logos);
 
-        return tierListDatasourcePort.save(savedTierList);
+        return tierListDatasourcePort.save(tierList);
     }
 
     public List<TierList> findAll() {

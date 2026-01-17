@@ -40,6 +40,7 @@ public class TierListLogoMoveService {
         tierListLogoMove.setTierList(tierList);
         tierListLogoMove.setColumn(column);
         tierListLogoMove.setLogo(logo);
+        tierListLogoMove.setUser(user);
         tierListLogoMove.setCreatedAt(LocalDateTime.now());
         return tierListLogoMoveDatasourcePort.save(tierListLogoMove);
     }

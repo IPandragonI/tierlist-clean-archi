@@ -23,6 +23,12 @@ public class ColumnService {
         return columnDatasourcePort.save(column);
     }
 
+    public List<Column> createAll(List<ColumnForm> columnForms, Long tierListId) {
+        return columnForms.stream()
+                .map(form -> create(form, tierListId))
+                .toList();
+    }
+
     public Column findById(Long id) {
         return columnDatasourcePort.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Column not found with id: " + id));

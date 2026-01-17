@@ -22,7 +22,7 @@ public class TierListLogoMoveController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Move a Logo to a Tier List")
-    public TierListLogoMoveDto create(TierListLogoMoveForm tierListLogoMoveForm) {
+    public TierListLogoMoveDto create(@RequestBody TierListLogoMoveForm tierListLogoMoveForm) {
         TierListLogoMove move = tierListLogoMoveService.create(tierListLogoMoveForm);
         return TierListLogoMoveDto.transfer(move);
     }

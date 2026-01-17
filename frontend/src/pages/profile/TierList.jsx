@@ -532,12 +532,6 @@ const MyTierListsPage = () => {
                                                     </Link>
                                                 </li>
                                                 <li>
-                                                    <Link to={`/tierlist/edit/${list.id}`} className="gap-2">
-                                                        <FaEdit/>
-                                                        Modifier
-                                                    </Link>
-                                                </li>
-                                                <li>
                                                     <button
                                                         onClick={() => handleExport(list.id)}
                                                         className="gap-2"
@@ -578,23 +572,11 @@ const MyTierListsPage = () => {
                                     </div>
 
                                     <div className="relative h-48 overflow-hidden">
-                                        {list.thumbnail ? (
-                                            <img
-                                                src={list.thumbnail}
-                                                alt={list.name}
-                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                            />
-                                        ) : (
-                                            <div className={`w-full h-full flex items-center justify-center ${
-                                                theme === 'dark'
-                                                    ? 'bg-gradient-to-br from-gray-700 to-gray-900'
-                                                    : 'bg-gradient-to-br from-gray-200 to-gray-300'
-                                            }`}>
-                                                <FaChartBar className={`text-4xl ${
-                                                    theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                                                }`}/>
-                                            </div>
-                                        )}
+                                        <img
+                                            src={list.logo[0]?.storedUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
+                                            alt={list.name}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
                                     </div>
 
                                     <div className="p-4">

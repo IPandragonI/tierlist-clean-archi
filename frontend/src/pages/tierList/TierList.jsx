@@ -12,12 +12,11 @@ import {arrayMove, sortableKeyboardCoordinates,} from '@dnd-kit/sortable';
 import {restrictToWindowEdges} from '@dnd-kit/modifiers';
 import {
     FaAward,
-    FaCertificate,
+    FaCertificate, FaDownload,
     FaGhost,
     FaMedal,
     FaPalette,
     FaRibbon,
-    FaSave,
     FaShare,
     FaStar,
     FaTrophy
@@ -29,140 +28,130 @@ import { useParams } from 'react-router-dom';
 
 const TierListPage = () => {
     const { id } = useParams();
-    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchTierListData();
-    }, []);
-
-    useEffect(() => {
-        setTierListTitle((data?.name + ' -  by ' + data?.creator?.firstname + ' ' + data?.creator?.lastname) || 'Ma Tier List Personnalisée');
-    }, [data]);
-
-    const fetchTierListData = async () => {
-        try {
-            const response = await fetch(`${config.apiBaseUrl}/tier-lists/${id}`, {
-                headers: config.getHeaders(),
-            });
-
-            const result = await response.json();
-            setData(result);
-            console.log(result)
-        }catch (error) {
-
-        } finally {
-            setLoading(false);
-        }
-    }
-    const tiers = [
-        {id: 's', title: 'S', icon: <FaTrophy className="text-yellow-600"/>, color: 'bg-yellow-400', items: []},
-        {id: 'a', title: 'A', icon: <FaStar className="text-red-500"/>, color: 'bg-red-400', items: []},
-        {id: 'b', title: 'B', icon: <FaAward className="text-orange-500"/>, color: 'bg-orange-400', items: []},
-        {id: 'c', title: 'C', icon: <FaMedal className="text-yellow-500"/>, color: 'bg-yellow-300', items: []},
-        {id: 'd', title: 'D', icon: <FaCertificate className="text-green-500"/>, color: 'bg-green-400', items: []},
-        {id: 'e', title: 'E', icon: <FaRibbon className="text-blue-500"/>, color: 'bg-blue-400', items: []},
-        {id: 'f', title: 'F', icon: <FaGhost className="text-gray-500"/>, color: 'bg-gray-400', items: []},
-    ];
-
-    const initialGalleryItems = [
-        {
-            id: 1,
-            title: 'The Legend of Zelda',
-            category: 'Jeux Vidéo',
-            imageUrl: 'https://picsum.photos/seed/zelda/300/200',
-            description: 'Jeu d\'aventure culte'
-        },
-        {
-            id: 2,
-            title: 'Avatar 2',
-            category: 'Films',
-            imageUrl: 'https://picsum.photos/seed/avatar/300/200',
-            description: 'Blockbuster visuel'
-        },
-        {
-            id: 3,
-            title: 'iPhone 15 Pro',
-            category: 'Technologie',
-            imageUrl: 'https://picsum.photos/seed/iphone/300/200',
-            description: 'Smartphone premium'
-        },
-        {
-            id: 4,
-            title: 'Pizza Margherita',
-            category: 'Nourriture',
-            imageUrl: 'https://picsum.photos/seed/pizza/300/200',
-            description: 'Classique italien'
-        },
-        {
-            id: 5,
-            title: 'Mona Lisa',
-            category: 'Art',
-            imageUrl: 'https://picsum.photos/seed/monalisa/300/200',
-            description: 'Peinture célèbre'
-        },
-        {
-            id: 6,
-            title: 'Tesla Model S',
-            category: 'Voitures',
-            imageUrl: 'https://picsum.photos/seed/tesla/300/200',
-            description: 'Voiture électrique'
-        },
-        {
-            id: 7,
-            title: 'Harry Potter',
-            category: 'Livres',
-            imageUrl: 'https://picsum.photos/seed/harrypotter/300/200',
-            description: 'Série fantastique'
-        },
-        {
-            id: 8,
-            title: 'Michael Jordan',
-            category: 'Sports',
-            imageUrl: 'https://picsum.photos/seed/jordan/300/200',
-            description: 'Légende du basket'
-        },
-        {
-            id: 9,
-            title: 'MacBook Pro',
-            category: 'Technologie',
-            imageUrl: 'https://picsum.photos/seed/macbook/300/200',
-            description: 'Ordinateur portable'
-        },
-        {
-            id: 10,
-            title: 'Sushi',
-            category: 'Nourriture',
-            imageUrl: 'https://picsum.photos/seed/sushi/300/200',
-            description: 'Spécialité japonaise'
-        },
-        {
-            id: 11,
-            title: 'Star Wars',
-            category: 'Films',
-            imageUrl: 'https://picsum.photos/seed/starwars/300/200',
-            description: 'Saga spatiale'
-        },
-        {
-            id: 12,
-            title: 'Messi',
-            category: 'Sports',
-            imageUrl: 'https://picsum.photos/seed/messi/300/200',
-            description: 'Génie du football'
-        },
-    ];
-
-    const [tierData, setTierData] = useState(tiers);
-    const [galleryItems, setGalleryItems] = useState(initialGalleryItems);
+    const [tierData, setTierData] = useState([]);
+    const [galleryItems, setGalleryItems] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [activeItem, setActiveItem] = useState(null);
     const [tierListTitle, setTierListTitle] = useState('Ma Tier List Personnalisée');
     const [searchQuery, setSearchQuery] = useState('');
+    const [columnsMap, setColumnsMap] = useState({});
+
+    const tierIconsByPosition = [
+        <FaTrophy className="text-yellow-600"/>,
+        <FaStar className="text-red-500"/>,
+        <FaAward className="text-orange-500"/>,
+        <FaMedal className="text-yellow-500"/>,
+        <FaCertificate className="text-green-500"/>,
+        <FaRibbon className="text-blue-500"/>,
+        <FaGhost className="text-gray-500"/>,
+    ];
+
+    const tierColorsByPosition = [
+        'bg-yellow-400',
+        'bg-red-400',
+        'bg-orange-400',
+        'bg-yellow-300',
+        'bg-green-400',
+        'bg-blue-400',
+        'bg-gray-400',
+    ];
+
+    useEffect(() => {
+        const fetchTierListData = async () => {
+            try {
+                const response = await fetch(`${config.apiBaseUrl}/tier-lists/${id}`, {
+                    headers: config.getHeaders(),
+                });
+
+                if (!response.ok) {
+                    console.error('Erreur lors du chargement de la tier list');
+                    return;
+                }
+
+                const result = await response.json();
+                console.log('Données reçues:', result);
+
+                setTierListTitle(
+                    result.name +
+                    (result.creator ? ` - by ${result.creator.firstname} ${result.creator.lastname}` : '')
+                );
+
+                if (result.columns && result.columns.length > 0) {
+                    const sortedColumns = [...result.columns].sort((a, b) => a.position - b.position);
+
+                    const columnMapping = {};
+                    sortedColumns.forEach(column => {
+                        columnMapping[column.name.toLowerCase()] = column;
+                    });
+                    setColumnsMap(columnMapping);
+
+                    const transformedTiers = sortedColumns.map((column, index) => {
+                        const columnId = column.name.toLowerCase();
+                        return {
+                            id: columnId,
+                            title: column.name,
+                            icon: tierIconsByPosition[index] || <FaMedal className="text-gray-500"/>,
+                            color: tierColorsByPosition[index] || 'bg-gray-400',
+                            items: []
+                        };
+                    });
+                    setTierData(transformedTiers);
+                }
+
+                if (result.logo && result.logo.length > 0) {
+                    const transformedLogos = result.logo.map(logo => ({
+                        id: logo.id,
+                        title: logo.name || logo.domain,
+                        category: result.category?.name || 'Non catégorisé',
+                        imageUrl: logo.storedUrl || logo.originalUrl || `https://img.logo.dev/${logo.domain}?token=pk_X-NzFXTFRRWLHBetzHJnvQ`,
+                        description: logo.domain,
+                        domain: logo.domain
+                    }));
+                    setGalleryItems(transformedLogos);
+                }
+
+            } catch (error) {
+                console.error('Erreur lors du chargement:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTierListData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {activationConstraint: {distance: 8}}),
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
     );
+
+    const saveLogoMove = async (logoId, tierId) => {
+        const column = columnsMap[tierId];
+        if (!column) {
+            console.error('Column not found for tier:', tierId);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/tier-list-logo-moves`, {
+                method: 'POST',
+                headers: config.getHeaders(),
+                body: JSON.stringify({
+                    tierListId: parseInt(id),
+                    logoId: parseInt(logoId),
+                    columnId: column.id
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Erreur lors de la sauvegarde du mouvement');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde du mouvement:', error);
+        }
+    };
 
     const handleDragStart = (event) => {
         setActiveId(event.active.id);
@@ -207,6 +196,8 @@ const TierListPage = () => {
                         ? {...tier, items: [...tier.items, {...galleryItem, id: galleryItem.id.toString()}]}
                         : tier
                 ));
+
+                saveLogoMove(galleryItem.id, overId);
             }
         }
         else if (!activeIdStr.startsWith('gallery-') && overId.match(/^[sabcdef]$/)) {
@@ -232,6 +223,8 @@ const TierListPage = () => {
                     }
                     return tier;
                 }));
+
+                saveLogoMove(draggedItem.id, overId);
             }
         }
         else if (activeIdStr !== overId) {
@@ -257,36 +250,15 @@ const TierListPage = () => {
         setActiveItem(null);
     };
 
-    const handleRemoveItem = (itemId) => {
-        let removedItem = null;
-
-        setTierData(prev => prev.map(tier => {
-            const item = tier.items.find(i => i.id === itemId);
-            if (item) {
-                removedItem = {...item, id: parseInt(item.id) || item.id};
-            }
-            return {...tier, items: tier.items.filter(i => i.id !== itemId)};
-        }));
-
-        // Remettre dans la galerie
-        if (removedItem) {
-            const originalId = typeof removedItem.id === 'string' ? parseInt(removedItem.id) : removedItem.id;
-            setGalleryItems(prev => [...prev, {...removedItem, id: originalId}]);
-        }
-    };
-
-    const handleAddFromGallery = (item, tierId = 's') => {
+    const handleAddFromGallery = (item, tierId) => {
         setGalleryItems(prev => prev.filter(i => i.id !== item.id));
         setTierData(prev => prev.map(tier =>
             tier.id === tierId
                 ? {...tier, items: [...tier.items, {...item, id: item.id.toString()}]}
                 : tier
         ));
-    };
 
-    const handleSave = () => {
-        console.log('Tier List sauvegardée:', {title: tierListTitle, tiers: tierData});
-        alert('Tier List sauvegardée avec succès !');
+        saveLogoMove(item.id, tierId);
     };
 
     const handleShare = () => {
@@ -295,6 +267,31 @@ const TierListPage = () => {
         } else {
             navigator.clipboard.writeText(window.location.href);
             alert('Lien copié dans le presse-papier !');
+        }
+    };
+
+    const handleExport = async () => {
+        try {
+            const response = await fetch(`${config.apiBaseUrl}/tier-list-logo-moves/export/${id}`, {
+                method: 'POST',
+                headers: config.getHeaders(),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de l\'exportation');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `tierlist-${id}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Erreur lors de l\'exportation:', error);
         }
     };
 
@@ -329,11 +326,11 @@ const TierListPage = () => {
                                 </h2>
                             </div>
                             <div className="flex space-x-3">
-                                <button onClick={handleSave} className="btn btn-primary btn-sm">
-                                    <FaSave className="mr-2"/> Sauvegarder
-                                </button>
                                 <button onClick={handleShare} className="btn btn-outline btn-primary btn-sm">
                                     <FaShare className="mr-2"/> Partager
+                                </button>
+                                <button onClick={handleExport} className="btn btn-outline btn-primary btn-sm">
+                                    <FaDownload className="mr-2"/> Exporter toutes les statistiques
                                 </button>
                             </div>
                         </div>
@@ -343,7 +340,7 @@ const TierListPage = () => {
                 <div className="container mx-auto px-4 py-6">
                     <div className="space-y-1 mb-8">
                         {tierData.map((tier) => (
-                            <Tier key={tier.id} {...tier} handleRemove={handleRemoveItem}/>
+                            <Tier key={tier.id} {...tier}/>
                         ))}
                     </div>
 

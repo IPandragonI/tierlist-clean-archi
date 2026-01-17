@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {FaPlus, FaSpinner, FaTrash} from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom';
+import {FaPlus, FaSpinner, FaTrash, FaCheck} from 'react-icons/fa';
 import config from "../../api/apiConfig.js";
 
-const emptyLogo = () => ({domain: ''});
+const emptyLogo = () => ({domain: '', verified: false, verifying: false});
 const defaultColumns = () => ([
     {name: 'S', position: 0},
     {name: 'A', position: 1},
     {name: 'B', position: 2},
     {name: 'C', position: 3},
     {name: 'D', position: 4},
-    {name: 'E', position: 5},
-    {name: 'F', position: 6},
 ])
 
 export default function TierListCreate({onSuccess}) {
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -47,6 +47,10 @@ export default function TierListCreate({onSuccess}) {
         const e = {};
         if (!name.trim()) e.name = 'Le nom est requis';
 
+        if (!categoryId || !categoryId.trim()) {
+            e.categoryId = 'La catégorie est requise';
+        }
+
         if (!columns || columns.length === 0) {
             e.columns = 'Au moins une colonne est requise';
         } else {
@@ -63,6 +67,8 @@ export default function TierListCreate({onSuccess}) {
         logos.forEach((l, idx) => {
             if (!l.domain || !String(l.domain).trim()) {
                 e[`logo-${idx}`] = 'Le domaine du logo est requis';
+            } else if (!l.verified) {
+                e[`logo-${idx}`] = 'Le logo doit être vérifié';
             }
         });
 
@@ -82,8 +88,54 @@ export default function TierListCreate({onSuccess}) {
 
     const handleLogoChange = (index, value) => {
         setLogos(prev => prev.map((l, idx) =>
-            idx === index ? {...l, domain: value} : l
+            idx === index ? {...l, domain: value, verified: false} : l
         ));
+    };
+
+    const handleVerifyLogo = async (index) => {
+        const logo = logos[index];
+        if (!logo.domain || !logo.domain.trim()) {
+            setErrors(prev => ({...prev, [`logo-${index}`]: 'Entrez un domaine avant de vérifier'}));
+            return;
+        }
+
+        logo.domain = logo.domain.trim().toLowerCase();
+        if (!/\.(com|fr|net|org|io|co|us|uk|de|jp|cn|ru|in|br|au|ca|es|it|nl|se|no|fi|ch|be|at|dk|pl|gr|cz|hu|ro|sk|bg|hr|lt|lv|ee)$/.test(logo.domain.trim())) {
+            logo.domain = logo.domain.trim() + '.com';
+            setLogos(prev => prev.map((l, idx) =>
+                idx === index ? {...l, domain: logo.domain, verifying: true} : l
+            ));
+        }
+
+        try {
+            const res = await fetch(`${config.apiBaseUrl}/logos`, {
+                method: 'POST',
+                headers: config.getHeaders(),
+                body: JSON.stringify({ domain: logo.domain.trim() })
+            });
+
+            if (res.ok) {
+                setLogos(prev => prev.map((l, idx) =>
+                    idx === index ? {...l, verified: true, verifying: false} : l
+                ));
+                setErrors(prev => {
+                    const newErrors = {...prev};
+                    delete newErrors[`logo-${index}`];
+                    return newErrors;
+                });
+            } else {
+                setLogos(prev => prev.map((l, idx) =>
+                    idx === index ? {...l, verified: false, verifying: false} : l
+                ));
+                setErrors(prev => ({...prev, [`logo-${index}`]: 'Impossible de vérifier ce logo'}));
+            }
+        } catch (ex) {
+            console.error('Verify logo error:', ex);
+            setLogos(prev => prev.map((l, idx) =>
+                idx === index ? {...l, verified: false, verifying: false} : l
+            ));
+            setErrors(prev => ({...prev, [`logo-${index}`]: 'Erreur de connexion au serveur'}));
+        }
     };
 
     const handleAddColumn = () => {
@@ -131,12 +183,17 @@ export default function TierListCreate({onSuccess}) {
             if (res.ok) {
                 const data = await res.json().catch(() => null);
                 if (onSuccess) onSuccess(data);
-                setName('');
-                setCategoryId('');
-                setLogos([emptyLogo()]);
-                setColumns([defaultColumns()])
-                setErrors({});
-                setServerError(null);
+
+                if (data && data.id) {
+                    navigate(`/tierlist/${data.id}`);
+                } else {
+                    setName('');
+                    setCategoryId('');
+                    setLogos([emptyLogo()]);
+                    setColumns(defaultColumns());
+                    setErrors({});
+                    setServerError(null);
+                }
             } else if (res.status === 400) {
                 const err = await res.json().catch(() => null);
                 if (err?.errors) {
@@ -253,6 +310,11 @@ export default function TierListCreate({onSuccess}) {
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                     Ajoutez les domaines des logos à évaluer
                                 </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    Source : <a href="https://www.logo.dev/search" target="_blank" rel="noreferrer"
+                                                 className="underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                                    Logo.dev</a>
+                                </p>
                             </div>
                             <button
                                 type="button"
@@ -266,24 +328,24 @@ export default function TierListCreate({onSuccess}) {
 
                         <div className="space-y-4">
                             {logos.map((logo, index) => (
-                                <div key={index} className="flex gap-3 items-start">
+                                <div key={index} className="flex gap-3 items-center">
                                     <div className="flex-1">
                                         <div className="relative">
                                             <input
                                                 value={logo.domain}
                                                 onChange={(e) => handleLogoChange(index, e.target.value)}
                                                 placeholder="exemple.com"
+                                                disabled={logo.verifying}
                                                 className={`w-full px-4 py-3 rounded-lg border ${
                                                     errors[`logo-${index}`]
                                                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                                        : logo.verified
+                                                        ? 'border-green-500 dark:border-green-600 focus:border-green-500 focus:ring-green-500'
                                                         : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
-                                                } bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-opacity-20 focus:outline-none pr-12 transition-all duration-200`}
+                                                } bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-opacity-20 focus:outline-none transition-all duration-200 ${
+                                                    logo.verifying ? 'opacity-50' : ''
+                                                }`}
                                             />
-                                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                                    .com
-                                                </span>
-                                            </div>
                                         </div>
                                         {errors[`logo-${index}`] && (
                                             <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -291,6 +353,29 @@ export default function TierListCreate({onSuccess}) {
                                             </p>
                                         )}
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleVerifyLogo(index)}
+                                        disabled={logo.verifying || logo.verified || !logo.domain.trim()}
+                                        className={`px-4 py-3 rounded-lg transition-colors duration-200 ${
+                                            logo.verified
+                                                ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default'
+                                                : logo.verifying
+                                                ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                                : !logo.domain.trim()
+                                                ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                                                : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800  cursor-pointer'
+                                        }`}
+                                        title={logo.verified ? "Logo vérifié" : logo.verifying ? "Vérification en cours..." : "Vérifier le logo"}
+                                    >
+                                        {logo.verifying ? (
+                                            <FaSpinner className="animate-spin" />
+                                        ) : logo.verified ? (
+                                            <FaCheck />
+                                        ) : (
+                                            <FaCheck />
+                                        )}
+                                    </button>
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveLogo(index)}
@@ -413,7 +498,7 @@ export default function TierListCreate({onSuccess}) {
                                         setName('');
                                         setCategoryId('');
                                         setLogos([emptyLogo()]);
-                                        setColumns([emptyColumn()]);
+                                        setColumns(defaultColumns());
                                         setErrors({});
                                         setServerError(null);
                                     }
@@ -426,7 +511,7 @@ export default function TierListCreate({onSuccess}) {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="px-8 py-3 rounded-lg font-medium bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                                className="px-8 py-3 rounded-lg font-medium bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer"
                             >
                                 {submitting ? (
                                     <span className="flex items-center gap-2">

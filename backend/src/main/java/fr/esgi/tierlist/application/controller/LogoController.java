@@ -25,8 +25,7 @@ public class LogoController {
     @Operation(summary = "Create or retrieve a logo by domain")
     public ResponseEntity<LogoDto> getOrCreate(@Valid @RequestBody LogoForm request) {
         Logo logo = logoService.getOrCreate(request.getDomain());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(LogoDto.transfer(logo));
+        return ResponseEntity.status(HttpStatus.CREATED).body(LogoDto.transfer(logo));
     }
 
     @GetMapping("/{id}")
