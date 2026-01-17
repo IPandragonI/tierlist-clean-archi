@@ -12,57 +12,6 @@ import org.springframework.web.servlet.View;
 public class BeanConfiguration {
 
     @Bean
-    public UserService userService(UserDatasourcePort userDatasourcePort) {
-        return new UserService(userDatasourcePort);
-    }
-
-    @Bean
-    public TierListService tierListService(TierListDatasourcePort tierListDatasourcePort,
-                                           ColumnDatasourcePort columnDatasourcePort,
-                                           LogoDatasourcePort logoDatasourcePort,
-                                           LogoProviderPort logoProviderPort,
-                                           ObjectStoragePort objectStoragePort,
-                                           CategoryDatasourcePort categoryDatasourcePort,
-                                           IAuthenticationFacade authenticationFacade) {
-        return new TierListService(tierListDatasourcePort,
-                columnService(columnDatasourcePort),
-                logoService(logoDatasourcePort, logoProviderPort, objectStoragePort),
-                categoryService(categoryDatasourcePort),
-                authenticationFacade);
-    }
-
-    @Bean
-    public LogoService logoService(LogoDatasourcePort logoDatasourcePort, LogoProviderPort logoProviderPort, ObjectStoragePort objectStoragePort) {
-        return new LogoService(logoDatasourcePort, logoProviderPort, objectStoragePort);
-    }
-
-    @Bean
-    public ColumnService columnService(ColumnDatasourcePort columnDatasourcePort) {
-        return new ColumnService(columnDatasourcePort);
-    }
-
-    @Bean
-    public TierListLogoMoveService tierListLogoService(TierListLogoMoveDatasourcePort tierListLogoDatasourcePort,
-                                                       TierListDatasourcePort tierListDatasourcePort,
-                                                       ColumnDatasourcePort columnDatasourcePort,
-                                                       LogoDatasourcePort logoDatasourcePort,
-                                                       LogoProviderPort logoProviderPort,
-                                                       ObjectStoragePort objectStoragePort,
-                                                       CategoryDatasourcePort categoryDatasourcePort,
-                                                       IAuthenticationFacade authenticationFacade) {
-        return new TierListLogoMoveService(tierListLogoDatasourcePort,
-                tierListService(tierListDatasourcePort, columnDatasourcePort, logoDatasourcePort, logoProviderPort, objectStoragePort, categoryDatasourcePort, authenticationFacade),
-                columnService(columnDatasourcePort),
-                logoService(logoDatasourcePort, logoProviderPort, objectStoragePort),
-                authenticationFacade);
-    }
-
-     @Bean
-     public CategoryService categoryService(CategoryDatasourcePort categoryDatasourcePort) {
-         return new CategoryService(categoryDatasourcePort);
-     }
-
-    @Bean
     public View exportSyntheseTierListsPdfView() {
         return new ExportStatPdfView();
     }
